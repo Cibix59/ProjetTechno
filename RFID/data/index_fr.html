@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<title>Four a bois Meuble Dubé</title>
-	
+
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -11,18 +12,42 @@
 	<script src="js/global.js"></script>
 </head>
 
-<body onload="getFromESP_getAllWoodOptions()">
+<body>
 	<div class="main">
 		<div class="coteGauche">
 			<!-- coté gauche-->
+			<div id="ip">
+				test
+			</div>
+			<div id="port">
+				test
+			</div>
+			<div id="intervalle">
+				test
+			</div>
 			<div>
 
 			</div>
-			
+
+			<input type="text" id="ipInput"><br><br>
+			<button onclick="envoisInfosToEsp('ipInput')">
+			  envoyer
+			</button>
+
+			<input type="text" id="portInput"><br><br>
+			<button onclick="envoisInfosToEsp('portInput')">
+			  envoyer
+			</button>
+
+			<input type="text" id="intervalleInput"><br><br>
+			<button onclick="envoisInfosToEsp('intervalleInput')">
+			  envoyer
+			</button>
+
 
 		</div>
 		<div class="coteDroit">
-			
+
 			<!-- coté droit-->
 			<div>
 

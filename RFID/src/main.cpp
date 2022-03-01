@@ -4,13 +4,15 @@
 
 #include <Arduino.h>
 
+#include <sstream>
+String tmpPrint = "rien";
+
 // Libraries
 #include <SPI.h>     //https://www.arduino.cc/en/reference/SPI
 #include <MFRC522.h> //https://github.com/miguelbalboa/rfid
 #include "myFunctions.cpp"
-using namespace std;
-#include <Wifi.h>
 
+#include <Wifi.h>
 
 // Variable pour la connection Wifi
 const char *SSID = "Clement_";
@@ -27,9 +29,22 @@ String ssIDRandom;
 WiFiManager wm;
 #define WEBSERVER_H
 
+// pour la connexion au broker
+#include <PubSubClient.h>
+#include <WiFiClient.h>
+WiFiClient wificlient;
+PubSubClient client(wificlient);
+
+char *mqttServer = "172.16.206.200";
+int mqttPort = 1883;
+const char *mqttID = "ESP32ClientClement";
+int intervalle = 1000;
+
 // Pour la gestion du serveur ESP32
 #include "MyServer.h"
 MyServer *myServer = NULL;
+
+using namespace std;
 
 // Constants
 #define SS_PIN 5
@@ -68,9 +83,69 @@ std::string CallBackMessageListener(string message)
   {
     return (String("Ok").c_str());
   }
+  if (string(actionToDo.c_str()).compare(string("getInfosFromESP")) == 0)
+  {
+    std::stringstream ss;
+    ss << mqttServer << ";" << mqttPort << ";" << intervalle;
+    std::string informations = ss.str();
+    // tmpPrint = informations.c_str();
+    return (informations.c_str());
+  }
+
+  //modifie les variables de l'esp
+  if (string(actionToDo.c_str()).compare(string("envoisInfosToEsp")) == 0)
+  {
+    if (string(arg1.c_str()).compare(string("ipInput")) == 0)
+    {
+      //transforme le string en char*
+      tmpPrint = arg2.c_str();
+      strcpy(mqttServer, arg2.c_str());
+    }
+    if (string(arg1.c_str()).compare(string("portInput")) == 0)
+    {
+      mqttPort= atoi(arg2.c_str());
+    }
+    if (string(arg1.c_str()).compare(string("intervalleInput")) == 0)
+    {
+      tmpPrint = atoi(arg2.c_str());
+      //intervalle= atoi(arg2.c_str());
+    }
+
+    return (String("Modification effectuée").c_str());
+  }
 
   std::string result = "";
   return result;
+}
+
+void callback(char *topic, byte *message, unsigned int length)
+{
+  Serial.print("Message arrived on topic: ");
+  Serial.print(topic);
+  Serial.print(". Message: ");
+  String messageTemp;
+  for (int i = 0; i < length; i++)
+  {
+    Serial.print((char)message[i]);
+    messageTemp += (char)message[i];
+  }
+  Serial.println();
+}
+
+void reconnect()
+{
+  Serial.println("Connecting to MQTT Broker...");
+  while (!client.connected())
+  {
+    Serial.println("Reconnecting to MQTT Broker..");
+
+    if (client.connect(mqttID))
+    {
+      Serial.println("Connected.");
+      // subscribe to topic
+    }
+    delay(500);
+  }
 }
 
 void setup()
@@ -117,11 +192,24 @@ void setup()
   rfid.PCD_Init();
   Serial.print(F("Reader :"));
   rfid.PCD_DumpVersionToSerial();
+
+  // ----------- Initialisation de la connexion au broker ----------------
+  client.setServer(mqttServer, mqttPort);
+  client.setCallback(callback);
 }
 void loop()
 {
   readRFID();
+
+  //Serial.println(tmpPrint);
+
+  if (!client.connected())
+    reconnect();
+  client.loop();
+  client.publish("esp/rfid", "test");
+  delay(intervalle +10);
 }
+
 void readRFID(void)
 { /* function readRFID */
   ////Read RFID card
@@ -142,7 +230,8 @@ void readRFID(void)
   }
   Serial.print(F("RFID In dec: "));
   printDec(rfid.uid.uidByte, rfid.uid.size);
-  Serial.println(rfid.uid.size);
+  // Serial.println(rfid.uid.size);
+
   // Halt PICC
   rfid.PICC_HaltA();
   // Stop encryption on PCD
@@ -165,6 +254,7 @@ void printHex(byte *buffer, byte bufferSize)
 */
 void printDec(byte *buffer, byte bufferSize)
 {
+  string id = "";
   Serial.println("printdec");
   for (byte i = 0; i < bufferSize; i++)
   {

@@ -50,6 +50,82 @@ void MyServer::initAllRoutes()
     this->onNotFound([](AsyncWebServerRequest *request)
                      { request->send(404, "text/plain", "Page Not Found"); });
 
+    this->on("/connexion", HTTP_POST, [](AsyncWebServerRequest *request)
+             {
+                 String txt = "pasOK";
+                 if (request->hasParam("login", true) && request->hasParam("password", true))
+                 {
+                     String login = request->getParam("login", true)->value();
+                     String password = request->getParam("password", true)->value();
+                     if(login == "testlogin"){
+                        txt = "ok";
+                     }  
+                    Serial.println(login);
+                    Serial.println(password);
+                    Serial.println("ici");
+                 }
+               request->send(200, "text/plain", txt); });
+
+    // récupere le status de l'esp (off/cold/heat)
+    this->on("/getInfosFromESP", HTTP_GET, [](AsyncWebServerRequest *request)
+             {
+                     std::string repString = "";
+
+                     if (ptrToCallBackFunction)
+                         repString = (*ptrToCallBackFunction)("getInfosFromESP");
+
+                     String infos = String(repString.c_str());
+
+                     request->send(200, "text/plain", infos); });
+
+    // met à jour les variables de l'esp
+    this->on("/envoisInfosToEsp", HTTP_POST, [](AsyncWebServerRequest *request)
+             {
+                std::string repString = "";
+                String infos="";
+
+                if (request->hasParam("ipInput", true) )
+                 {
+                     infos = "ipInput"+request->getParam("ipInput", true)->value();
+                 }
+                if (request->hasParam("portInput", true) )
+                 {
+                    infos = "portInput"+request->getParam("portInput", true)->value();
+                 }
+                if (request->hasParam("intervalleInput", true) )
+                 {
+                    infos = "intervalleInput"+request->getParam("intervalleInput", true)->value();
+                    Serial.println(infos);
+                 }
+
+                if (ptrToCallBackFunction)
+                    repString = (*ptrToCallBackFunction)(("envoisInfosToEsp "+ infos).c_str());
+
+               request->send(200, "text/plain", repString.c_str()); });
+
+    /*
+ // envoit le signal de démarrage du four a l'esp
+    this->on("/declencheFour", HTTP_POST, [](AsyncWebServerRequest *request)
+             {
+                 String tmp = "";
+                 if (request->hasParam("temperature", true))
+                 {
+                     String temperature = request->getParam("temperature", true)->value();
+                     tmp = temperature;
+                 }
+                 if (request->hasParam("duree", true))
+                 {
+                     String duree = request->getParam("duree", true)->value();
+                     tmp = tmp + " " + duree;
+                 }
+
+                 tmp = "declencheFour " + tmp;
+
+                 if (ptrToCallBackFunction)
+                     (*ptrToCallBackFunction)(tmp.c_str());
+                 request->send(204); });
+ */
+
     // renvoit la liste des bois
 
     /* this->on("/getAllWoodOptions", HTTP_GET, [](AsyncWebServerRequest *request)
@@ -66,59 +142,6 @@ void MyServer::initAllRoutes()
         request->send(200, "text/plain", response); });
 
  */
-    this->on("/connexion", HTTP_POST, [](AsyncWebServerRequest *request)
-             {
-                 String txt = "pasOK";
-                 if (request->hasParam("login", true) && request->hasParam("password", true))
-                 {
-                     String login = request->getParam("login", true)->value();
-                     String password = request->getParam("password", true)->value();
-                     if(login == "testlogin"){
-                        txt = "ok";
-                     }  
-                    Serial.println(login);
-                    Serial.println(password);
-                    Serial.println("ici");
-                 }
-               request->send(200, "text/plain", txt); });
-    /*
-     // envoit le signal de démarrage du four a l'esp
-        this->on("/declencheFour", HTTP_POST, [](AsyncWebServerRequest *request)
-                 {
-                     String tmp = "";
-                     if (request->hasParam("temperature", true))
-                     {
-                         String temperature = request->getParam("temperature", true)->value();
-                         tmp = temperature;
-                     }
-                     if (request->hasParam("duree", true))
-                     {
-                         String duree = request->getParam("duree", true)->value();
-                         tmp = tmp + " " + duree;
-                     }
-
-                     tmp = "declencheFour " + tmp;
-
-                     if (ptrToCallBackFunction)
-                         (*ptrToCallBackFunction)(tmp.c_str());
-                     request->send(204); });
-
-
-
-
-     // récupere le status de l'esp (off/cold/heat)
-        this->on("/lireStatus", HTTP_GET, [](AsyncWebServerRequest *request)
-                 {
-                     std::string repString = "";
-
-                     if (ptrToCallBackFunction)
-                         repString = (*ptrToCallBackFunction)("askStatus");
-
-                     String lireStatus = String(repString.c_str());
-
-                     request->send(200, "text/plain", lireStatus); });
-
-     */
 
     this->begin();
 };
