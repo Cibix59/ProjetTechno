@@ -200,16 +200,21 @@ void setup()
 }
 void loop()
 {
-  
-
-  // Serial.println(tmpPrint);
-
+  String idRFIDTmp = readRFID().c_str();
   if (!client.connected())
     reconnect();
   client.loop();
-  client.publish("esp/rfid", readRFID().c_str());
+
+  if (idRFIDTmp != "NULL")
+  {
+    Serial.println(idRFIDTmp);
+
+    client.publish("esp/rfid", idRFIDTmp.c_str());
+  }
   delay(intervalle + 10);
 }
+
+
 
 String readRFID(void)
 { /* function readRFID */
