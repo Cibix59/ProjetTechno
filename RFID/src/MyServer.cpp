@@ -86,18 +86,16 @@ void MyServer::initAllRoutes()
 
                 if (request->hasParam("ipInput", true) )
                  {
-                     infos = "ipInput"+request->getParam("ipInput", true)->value();
+                     infos = "ipInput "+request->getParam("ipInput", true)->value();
                  }
                 if (request->hasParam("portInput", true) )
                  {
-                    infos = "portInput"+request->getParam("portInput", true)->value();
+                    infos = "portInput "+request->getParam("portInput", true)->value();
                  }
                 if (request->hasParam("intervalleInput", true) )
                  {
-                    infos = "intervalleInput"+request->getParam("intervalleInput", true)->value();
-                    Serial.println(infos);
+                    infos = "intervalleInput "+request->getParam("intervalleInput", true)->value();
                  }
-
                 if (ptrToCallBackFunction)
                     repString = (*ptrToCallBackFunction)(("envoisInfosToEsp "+ infos).c_str());
 

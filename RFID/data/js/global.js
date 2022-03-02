@@ -11,48 +11,7 @@ function test() {
     console.log("test");
 }
 
-function connexion() {
-    console.log("test");
-    var xhttp = new XMLHttpRequest();
-    xhttp.open("POST", "textEnvoyee", true);
-    xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
-    xhttp.onreadystatechange = function () {
-
-        if (this.readyState == 4 && this.status == 200) {
-            console.log(this.responseText);
-            if (this.responseText == "ok") {
-                window.location.href = "/home";
-            }
-            /*            var arrayOfStrings = JSON.parse(this.responseText);
-                      reponse= arrayOfStrings;
-                      for (i = 0; i < arrayOfStrings.length; i++) {
-                          var x = document.getElementById("selectBois");
-                          var option = document.createElement("option");
-                          option.value = arrayOfStrings[i]["id"];
-                          option.text = arrayOfStrings[i]["bois"];
-                          x.add(option);
-                          }
-          
-                      //Refresh le contenu
-                      var siteHeader = document.getElementById('selectBois');
-                      siteHeader.style.display='none';
-                      siteHeader.offsetHeight; 
-                      siteHeader.style.display='block';
-                      afficherCaracteristique(1); */
-        }
-    };
-
-
-    xhttp.open("POST", "connexion", true);
-    xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-
-    login = document.getElementById("login").value;
-    password = document.getElementById("password").value;
-    console.log(login);
-    var params = String("login") + String("=") + String(login) + String("&") + String("password") + String("=") + String(password);
-    xhttp.send(params);
-}
 
 
 // fonctions qui permet de récupérer le témperature du système.
@@ -79,10 +38,10 @@ function envoisInfosToEsp(typeInfo) {
     var xhttp = new XMLHttpRequest();
     xhttp.open("POST", "envoisInfosToEsp", true);
     xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    var params = ""
+    var params = "";
+    info = document.getElementById(typeInfo).value;
+    console.log(info);
 
-    info = document.getElementById(typeInfo).innerHTML;
-    console.debug(info);
     params = String(typeInfo) + String("=") + String(info);
 
     xhttp.send(params);
