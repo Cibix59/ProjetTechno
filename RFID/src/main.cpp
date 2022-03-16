@@ -4,13 +4,15 @@
 
 #include <Arduino.h>
 
+#include <sstream>
+String tmpPrint = "rien";
+
 // Libraries
 #include <SPI.h>     //https://www.arduino.cc/en/reference/SPI
 #include <MFRC522.h> //https://github.com/miguelbalboa/rfid
 #include "myFunctions.cpp"
-using namespace std;
-#include <Wifi.h>
 
+#include <Wifi.h>
 
 // Variable pour la connection Wifi
 const char *SSID = "Clement_";
@@ -27,17 +29,30 @@ String ssIDRandom;
 WiFiManager wm;
 #define WEBSERVER_H
 
+// pour la connexion au broker
+#include <PubSubClient.h>
+#include <WiFiClient.h>
+WiFiClient wificlient;
+PubSubClient client(wificlient);
+
+char mqttServer[17] = "172.16.206.200";
+int mqttPort = 1883;
+const char *mqttID = "ESP32ClientClement";
+int intervalle = 1000;
+
 // Pour la gestion du serveur ESP32
 #include "MyServer.h"
 MyServer *myServer = NULL;
+
+using namespace std;
 
 // Constants
 #define SS_PIN 5
 #define RST_PIN 0
 // Methodes
-void readRFID(void);
+String readRFID(void);
 void printHex(byte *buffer, byte bufferSize);
-void printDec(byte *buffer, byte bufferSize);
+String printDec(byte *buffer, byte bufferSize);
 
 // Parameters
 const int ipaddress[4] = {103, 97, 67, 25};
@@ -48,7 +63,7 @@ MFRC522 rfid = MFRC522(SS_PIN, RST_PIN);
 
 std::string CallBackMessageListener(string message)
 {
-
+  // tmpPrint = message.c_str();
   while (replaceAll(message, std::string("  "), std::string(" ")))
     ;
   // Décortiquer le message
@@ -68,9 +83,70 @@ std::string CallBackMessageListener(string message)
   {
     return (String("Ok").c_str());
   }
+  if (string(actionToDo.c_str()).compare(string("getInfosFromESP")) == 0)
+  {
+    std::stringstream ss;
+    ss << mqttServer << ";" << mqttPort << ";" << intervalle;
+    std::string informations = ss.str();
+    // tmpPrint = informations.c_str();
+    return (informations.c_str());
+  }
+
+  // modifie les variables de l'esp
+  if (string(actionToDo.c_str()).compare(string("envoisInfosToEsp")) == 0)
+  {
+
+    if (string(arg1.c_str()).compare(string("ipInput")) == 0)
+    {
+      // transforme le string en char*
+      tmpPrint = arg2.c_str();
+      strcpy(mqttServer, arg2.c_str());
+    }
+    if (string(arg1.c_str()).compare(string("portInput")) == 0)
+    {
+      mqttPort = atoi(arg2.c_str());
+    }
+    if (string(arg1.c_str()).compare(string("intervalleInput")) == 0)
+    {
+      tmpPrint = arg2.c_str();
+      intervalle = atoi(arg2.c_str());
+    }
+
+    return (String("Modification effectuée").c_str());
+  }
 
   std::string result = "";
   return result;
+}
+
+void callback(char *topic, byte *message, unsigned int length)
+{
+  Serial.print("Message arrived on topic: ");
+  Serial.print(topic);
+  Serial.print(". Message: ");
+  String messageTemp;
+  for (int i = 0; i < length; i++)
+  {
+    Serial.print((char)message[i]);
+    messageTemp += (char)message[i];
+  }
+  Serial.println();
+}
+
+void reconnect()
+{
+  Serial.println("Connecting to MQTT Broker...");
+  while (!client.connected())
+  {
+    Serial.println("Reconnecting to MQTT Broker..");
+
+    if (client.connect(mqttID))
+    {
+      Serial.println("Connected.");
+      // subscribe to topic
+    }
+    delay(500);
+  }
 }
 
 void setup()
@@ -117,13 +193,32 @@ void setup()
   rfid.PCD_Init();
   Serial.print(F("Reader :"));
   rfid.PCD_DumpVersionToSerial();
+
+  // ----------- Initialisation de la connexion au broker ----------------
+  client.setServer(mqttServer, mqttPort);
+  client.setCallback(callback);
 }
 void loop()
 {
-  readRFID();
+  String idRFIDTmp = readRFID().c_str();
+  if (!client.connected())
+    reconnect();
+  client.loop();
+
+  if (idRFIDTmp != "NULL")
+  {
+    Serial.println(idRFIDTmp);
+
+    client.publish("esp/rfid", idRFIDTmp.c_str());
+  }
+  delay(intervalle + 10);
 }
-void readRFID(void)
+
+
+
+String readRFID(void)
 { /* function readRFID */
+  String id ="NULL";
   ////Read RFID card
   for (byte i = 0; i < 6; i++)
   {
@@ -131,28 +226,32 @@ void readRFID(void)
   }
   // Look for new 1 cards
   if (!rfid.PICC_IsNewCardPresent())
-    return;
+    return id;
   // Verify if the NUID has been readed
   if (!rfid.PICC_ReadCardSerial())
-    return;
+    return id;
   // Store NUID into nuidPICC array
   for (byte i = 0; i < 4; i++)
   {
     nuidPICC[i] = rfid.uid.uidByte[i];
   }
   Serial.print(F("RFID In dec: "));
-  printDec(rfid.uid.uidByte, rfid.uid.size);
-  Serial.println(rfid.uid.size);
+  id = printDec(rfid.uid.uidByte, rfid.uid.size);
+  // Serial.println(rfid.uid.size);
+
   // Halt PICC
   rfid.PICC_HaltA();
   // Stop encryption on PCD
   rfid.PCD_StopCrypto1();
+
+  return id;
 }
 /**
    Helper routine to dump a byte array as hex values to Serial.
 */
 void printHex(byte *buffer, byte bufferSize)
 {
+
   Serial.println("printhex");
   for (byte i = 0; i < bufferSize; i++)
   {
@@ -163,12 +262,16 @@ void printHex(byte *buffer, byte bufferSize)
 /**
    Helper routine to dump a byte array as dec values to Serial.
 */
-void printDec(byte *buffer, byte bufferSize)
+String printDec(byte *buffer, byte bufferSize)
 {
+  String id = "";
   Serial.println("printdec");
   for (byte i = 0; i < bufferSize; i++)
   {
     Serial.print(buffer[i] < 0x10 ? " 0" : " ");
     Serial.print(buffer[i], DEC);
+    id = id + (buffer[i]);
   }
+  Serial.println(id);
+  return id;
 }
