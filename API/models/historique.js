@@ -1,28 +1,29 @@
+
+
 const mongoose = require('mongoose')
 
 const historiqueSchema = new mongoose.Schema({
-    date:{
+    date: {
         type: String,
         required: true
     },
-    heure:{
+    heure: {
         type: String,
         required: true
     },
-    evennement:{
+    evennement: {
         type: String,
         required: true
     },
-    peripherique:{
-        nom:{
-            type: String,
-            required: true
-        },
-        description:{
-            type: String,
-            required: true
-        }
+    nomPeripherique: {
+        type: String,
+        required: true
+    },
+    descriptionPeripherique: {
+        type: String,
+        required: true
     }
+
 },{collection : "historique"})
 
 module.exports = mongoose.model("historique", historiqueSchema);
