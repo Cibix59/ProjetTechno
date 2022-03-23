@@ -10,7 +10,7 @@ def on_message(client, userdata, message):
     print("message retain flag=",message.retain)
 
 
-    info = json.dumps(str(message.payload.decode("utf-8")))
+    info = json.loads(str(message.payload.decode("utf-8")))
     print("transformé:",info)
     topic = message.topic
     if topic == "esp/rfid":
