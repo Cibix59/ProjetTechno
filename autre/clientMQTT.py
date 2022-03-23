@@ -15,10 +15,9 @@ def on_message(client, userdata, message):
     info = json.loads(str(message.payload.decode("utf-8")))
     print("transformé:",info)
     topic = message.topic
-    response = requests.post('http://172.16.203.109:3000/api/historique/log', json = info)
-    
-    if topic == "esp/rfid":
+    if topic == "log":
         print("c'est un esp")
+        response = requests.post('http://172.16.203.109:3000/api/historique/log', json = info)
     else:
         print("Code not found")
 
