@@ -16,7 +16,6 @@ def on_message(client, userdata, message):
     print("transformé:",info)
     topic = message.topic
     if topic == "log":
-        print("c'est un esp")
         response = requests.post('http://172.16.203.109:3000/api/historique/log', json = info)
     else:
         print("Code not found")
