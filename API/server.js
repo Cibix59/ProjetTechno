@@ -14,8 +14,10 @@ app.use(express.json())
 
 const userRoute = require ('./routes/user')
 const historiqueRoute = require ('./routes/historique')
+const rfidRoute = require ('./routes/rfid')
 
-app.use('/api/users', userRoute)
+app.use('/api/user', userRoute)
 app.use('/api/historique', historiqueRoute)
+app.use('/api/rfid', rfidRoute)
 
 app.listen(3000, () => console.log("Le serveur a démarré"))
