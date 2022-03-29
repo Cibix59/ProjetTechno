@@ -8,7 +8,11 @@ const userSchema = new mongoose.Schema({
     password:{
         type: String,
         required: true
+    },
+    codeRFID:{
+        type: String,
+        required: false
     }
 })
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("user", userSchema);

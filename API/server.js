@@ -12,10 +12,10 @@ tdb.once('open', () => console.log("Connecté à la base de données"))
 app.use(express.json())
 
 
-/* const peripheriquesRoute = require ('./routes/peripheriques') */
+const userRoute = require ('./routes/user')
 const historiqueRoute = require ('./routes/historique')
 
-/* app.use('/api/peripheriques', peripheriquesRoute) */
+app.use('/api/users', userRoute)
 app.use('/api/historique', historiqueRoute)
 
 app.listen(3000, () => console.log("Le serveur a démarré"))
