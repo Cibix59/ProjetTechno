@@ -44,6 +44,8 @@
 #include "MySerial.h"
 MySerial *mySerial;
 
+#include "rapidxml.hpp"
+
 // Structure local utilisés pour garder les informations lues de l'écran
 struct datasRead
 {
@@ -335,40 +337,40 @@ void fonctionLoop()
     switch (rd.id)
     {
 
-      case 0x0002:
-      { // Version
-        std::cout << "GData : " << intToHexa(abs(rd.id)) << " " << rd.command << " " << rd.name << " " << rd.type << "\n";
-        std::string stoneVersion = rd.name;
-        std::cout << "Version : " << stoneVersion.c_str() << "\n";
+    case 0x0002:
+    { // Version
+      std::cout << "GData : " << intToHexa(abs(rd.id)) << " " << rd.command << " " << rd.name << " " << rd.type << "\n";
+      std::string stoneVersion = rd.name;
+      std::cout << "Version : " << stoneVersion.c_str() << "\n";
 
-        // std::this_thread::sleep_for(std::chrono::milliseconds(10));
+      // std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
-        break;
-      }
-/*       case 0x1001:
-      { // Bouton
-        std::cout << "GData : " << intToHexa(abs(rd.id)) << " " << rd.command << " " << rd.name << " " << rd.type << "\n";
-        std::string stoneVersion = rd.name;
-        std::cout << " ok";
+      break;
+    }
+      /*       case 0x1001:
+            { // Bouton
+              std::cout << "GData : " << intToHexa(abs(rd.id)) << " " << rd.command << " " << rd.name << " " << rd.type << "\n";
+              std::string stoneVersion = rd.name;
+              std::cout << " ok";
 
-        // std::this_thread::sleep_for(std::chrono::milliseconds(10));
+              // std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
-        break;
-      } */
+              break;
+            } */
     }
 
-    if (rd.id < 0){
-
+    if (rd.id < 0)
+    {
 
       std::cout << abs(rd.id);
       std::cout << rd.name;
       std::cout << "Data received ( id: : " << intToHexa(abs(rd.id)) << "  Command: " << rd.command << " Type: " << rd.type << ")\n";
     }
 
-    if (rd.id == 0){
+    if (rd.id == 0)
+    {
       std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
-
   }
 }
 
@@ -377,10 +379,16 @@ int main(int argc, char **argv)
   using std::cerr;
   using std::cout;
 
+  //chargement du xml
+  rapidxml::file<> xmlFile("./pluginRFID.xml"); // Default template is char
+  rapidxml::xml_document<> doc;
+  doc.parse<0>(xmlFile.data());
+
   char serialPort[255];
   strcpy(serialPort, "/dev/");
   strcat(serialPort, argv[1]);
 
+  cout << doc;
   cout << std::string("Serial port used: ") << serialPort << "\n";
 
   mySerial = new MySerial(serialPort);

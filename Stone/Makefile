@@ -7,8 +7,8 @@
 
 all: TestStone run
 
-TestStone:  main.cpp MySerial.cpp
-	g++	-fPIC -std=c++2a -o TestStone MySerial.cpp  main.cpp -lpthread
+TestStone:  main.cpp MySerial.cpp rapidxml.hpp
+	g++	-fPIC -std=c++2a -o TestStone MySerial.cpp rapidxml.hpp main.cpp -lpthread
 
 clean:
 # 	rm -f SerialPort.so
