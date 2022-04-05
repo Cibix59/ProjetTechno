@@ -12,11 +12,11 @@ tdb.once('open', () => console.log("Connecté à la base de données"))
 app.use(express.json())
 
 
-const userRoute = require ('./routes/user')
+
 const historiqueRoute = require ('./routes/historique')
 const rfidRoute = require ('./routes/rfid')
 
-app.use('/api/user', userRoute)
+
 app.use('/api/historique', historiqueRoute)
 app.use('/api/rfid', rfidRoute)
 
