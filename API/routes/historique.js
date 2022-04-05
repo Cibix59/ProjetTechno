@@ -9,20 +9,11 @@ router.get('/:nom', getUnHistorique, (req, res) => {
     res.send(res.lhistorique)
 })
 
-router.get('/:nom', getUnHistorique, (req, res) => {
-    console.log(res.lhistorique)
-    res.send(res.lhistorique)
-})
 
 
 //Ajout d'un nouvel enregistrement
 router.post('/log', async (req, res) => {
 
-    console.log(req.body.date)
-    console.log(req.body.heure)
-    console.log(req.body.evennement)
-    console.log(req.body.nomPeripherique)
-    console.log(req.body.descriptionPeripherique)
     unhistorique = new Historique({
         date: req.body.date,
         heure: req.body.heure,

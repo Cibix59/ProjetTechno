@@ -5,6 +5,7 @@
     @version 1.1 20/11/20
     @version 1.2 30/11/21
     @version 1.3 23/02/22
+    @version 1.4 21/03/22
 */
 #include <Arduino.h>
 #include "MyServer.h"
@@ -100,46 +101,6 @@ void MyServer::initAllRoutes()
                     repString = (*ptrToCallBackFunction)(("envoisInfosToEsp "+ infos).c_str());
 
                request->send(200, "text/plain", repString.c_str()); });
-
-    /*
- // envoit le signal de démarrage du four a l'esp
-    this->on("/declencheFour", HTTP_POST, [](AsyncWebServerRequest *request)
-             {
-                 String tmp = "";
-                 if (request->hasParam("temperature", true))
-                 {
-                     String temperature = request->getParam("temperature", true)->value();
-                     tmp = temperature;
-                 }
-                 if (request->hasParam("duree", true))
-                 {
-                     String duree = request->getParam("duree", true)->value();
-                     tmp = tmp + " " + duree;
-                 }
-
-                 tmp = "declencheFour " + tmp;
-
-                 if (ptrToCallBackFunction)
-                     (*ptrToCallBackFunction)(tmp.c_str());
-                 request->send(204); });
- */
-
-    // renvoit la liste des bois
-
-    /* this->on("/getAllWoodOptions", HTTP_GET, [](AsyncWebServerRequest *request)
-             {
-        Serial.println("getAllWoodOptions... ");
-
-        HTTPClient http;
-        String woodApiRestAddress = "http://172.16.203.109:3000/api/woods";
-         //String woodApiRestAddress = "http://192.168.0.132:3000/api/woods";
-        http.begin(woodApiRestAddress);
-        http.GET();
-        String response = http.getString();
-
-        request->send(200, "text/plain", response); });
-
- */
 
     this->begin();
 };

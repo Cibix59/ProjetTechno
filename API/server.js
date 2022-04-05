@@ -12,10 +12,12 @@ tdb.once('open', () => console.log("Connecté à la base de données"))
 app.use(express.json())
 
 
-/* const peripheriquesRoute = require ('./routes/peripheriques') */
-const historiqueRoute = require ('./routes/historique')
 
-/* app.use('/api/peripheriques', peripheriquesRoute) */
+const historiqueRoute = require ('./routes/historique')
+const rfidRoute = require ('./routes/rfid')
+
+
 app.use('/api/historique', historiqueRoute)
+app.use('/api/rfid', rfidRoute)
 
 app.listen(3000, () => console.log("Le serveur a démarré"))
