@@ -9,7 +9,9 @@ const RFID = require('../models/rfid');
 router.post('/creer', async (req, res) => {
 
     const rfid = new RFID({
-        codeRFID: req.body.codeRFID
+        utilisateur: req.body.utilisateur,
+        codeRFID: req.body.codeRFID,
+        porte: req.body.porte
     })
     try{
         const nouveauRFID = await rfid.save()
@@ -21,7 +23,7 @@ router.post('/creer', async (req, res) => {
 })
 
 
-router.put('/ajouterRFID', async (req, res) => {
+/* router.put('/ajouterRFID', async (req, res) => {
     
     try {
         rfid = await RFID.find({ "codeRFID": req.body.codeRFID })
@@ -43,7 +45,9 @@ router.put('/ajouterRFID', async (req, res) => {
     catch(err){
         res.status(400).json({message: err.message})
     }
-})
+}) */
+
+
 
 /* 
 ajout d'elements à la liste porte
@@ -73,7 +77,13 @@ async function checkAuthRFID(req, res, next) {
     console.log("reponse")
     console.log(reponse)
     console.log("reponse2")
-    res.reponse = reponse
+
+    if(reponse.length>0){
+        res.reponse = reponse[0].porte
+    }else{
+        res.reponse = "-1"
+    }
+    
     next()
 }
 
