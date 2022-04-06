@@ -53,6 +53,7 @@ using namespace std;
 String readRFID(void);
 void printHex(byte *buffer, byte bufferSize);
 String printDec(byte *buffer, byte bufferSize);
+int ouvrePorte(String codeRFID);
 
 // Parameters
 const int ipaddress[4] = {103, 97, 67, 25};
@@ -214,11 +215,9 @@ void loop()
   delay(intervalle + 10);
 }
 
-
-
 String readRFID(void)
 { /* function readRFID */
-  String id ="NULL";
+  String id = "NULL";
   ////Read RFID card
   for (byte i = 0; i < 6; i++)
   {
@@ -237,6 +236,7 @@ String readRFID(void)
   }
   Serial.print(F("RFID In dec: "));
   id = printDec(rfid.uid.uidByte, rfid.uid.size);
+  ouvrePorte(id);
   // Serial.println(rfid.uid.size);
 
   // Halt PICC
@@ -249,7 +249,7 @@ String readRFID(void)
 /**
    Helper routine to dump a byte array as hex values to Serial.
 */
-void printHex(byte *buffer, byte bufferSize)
+/* void printHex(byte *buffer, byte bufferSize)
 {
 
   Serial.println("printhex");
@@ -258,7 +258,7 @@ void printHex(byte *buffer, byte bufferSize)
     Serial.print(buffer[i] < 0x10 ? " 0" : " ");
     Serial.print(buffer[i], HEX);
   }
-}
+} */
 /**
    Helper routine to dump a byte array as dec values to Serial.
 */
@@ -274,4 +274,23 @@ String printDec(byte *buffer, byte bufferSize)
   }
   Serial.println(id);
   return id;
+}
+
+int ouvrePorte(String codeRFID)
+{
+  Serial.println(codeRFID);
+  HTTPClient http;
+  /* String woodApiRestAddress = "http://172.16.203.109:3000/api/woods"; */
+  /*  String woodApiRestAddress = "http://192.168.0.132:3000/api/woods"; */
+  http.begin("http://172.16.203.109:3000/api/rfid/authRFID");
+  http.addHeader("Accept", "application/json");
+  http.addHeader("Content-Type", "application/json");
+  String param = "{\"codeRFID\": \"" + codeRFID + "\"}";
+  Serial.println(param);
+  http.POST(param);
+  Serial.println("test3");
+  String response = http.getString();
+
+  Serial.println(response);
+  return 0;
 }

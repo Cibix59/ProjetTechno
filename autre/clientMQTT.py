@@ -11,8 +11,6 @@ def on_message(client, userdata, message):
     print("message qos=",message.qos)
     print("message retain flag=",message.retain)
 
-
-
     info = json.loads(str(message.payload.decode("utf-8")))
     print("transformé:",info)
     topic = message.topic
