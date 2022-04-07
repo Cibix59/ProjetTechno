@@ -13,12 +13,12 @@ router.post('/creer', async (req, res) => {
         codeRFID: req.body.codeRFID,
         porte: req.body.porte
     })
-    try{
+    try {
         const nouveauRFID = await rfid.save()
         res.status(201).json(nouveauRFID)
     }
-    catch(err){
-        res.status(400).json({message: err.message})
+    catch (err) {
+        res.status(400).json({ message: err.message })
     }
 })
 
@@ -64,11 +64,15 @@ router.post('/authRFID', checkAuthRFID, (req, res) => {
 
 // Vérifie si le code rfid est correct
 async function checkAuthRFID(req, res, next) {
+    console.log("req.body")
     console.log(req.body)
+    console.log("req.body.codeRFID")
+    console.log(req.body.codeRFID)
+
     let reponse
     try {
         reponse = await RFID.find({ "codeRFID": req.body.codeRFID })
-        if (reponse == null ) {
+        if (reponse == null) {
             return res.status(404).json({ message: "Impossible de trouver le code rfid" })
         }
     } catch (err) {
@@ -77,13 +81,15 @@ async function checkAuthRFID(req, res, next) {
     console.log("reponse")
     console.log(reponse)
     console.log("reponse2")
-
-    if(reponse.length>0){
-        res.reponse = reponse[0].porte
-    }else{
+    try {
+        if (reponse.length > 0) {
+            res.reponse = reponse[0].porte
+        } else {
+            res.reponse = "-1"
+        }
+    } catch (err) {
         res.reponse = "-1"
     }
-    
     next()
 }
 

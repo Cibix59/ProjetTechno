@@ -208,9 +208,14 @@ void loop()
 
   if (idRFIDTmp != "NULL")
   {
-    Serial.println(idRFIDTmp);
+    
+    String param = "{\"codeRFID\": \"" + idRFIDTmp + "\"}";
+    Serial.println("param");
+    Serial.println(param.c_str());
 
-    client.publish("esp/rfid", idRFIDTmp.c_str());
+    client.publish("demande/rfid", param.c_str());
+    /* ouvrePorte(idRFIDTmp); */
+    client.subscribe("reponse/rfid");
   }
   delay(intervalle + 10);
 }
@@ -236,7 +241,7 @@ String readRFID(void)
   }
   Serial.print(F("RFID In dec: "));
   id = printDec(rfid.uid.uidByte, rfid.uid.size);
-  ouvrePorte(id);
+
   // Serial.println(rfid.uid.size);
 
   // Halt PICC
