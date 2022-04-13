@@ -15,11 +15,10 @@ router.get('/:nom', getUnHistorique, (req, res) => {
 router.post('/log', async (req, res) => {
 
     unhistorique = new Historique({
+        topic: req.body.topic,
+        payload: req.body.payload,
         date: req.body.date,
-        heure: req.body.heure,
-        evennement: req.body.evennement,
-        nomPeripherique: req.body.nomPeripherique,
-        descriptionPeripherique: req.body.descriptionPeripherique
+        heure: req.body.heure
     })
 
     try {

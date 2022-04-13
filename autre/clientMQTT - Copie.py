@@ -25,33 +25,25 @@ def on_message(client, userdata, message):
              'User-Agent': 'python-requests/2.4.3 CPython/3.4.0',
              'X-Request-Id': 'xx-xx-xx'}
     topic = str(message.topic)
-    print("ok1")
 
+    heure =str(date.today().strftime("%d/%m/%Y"))
+    dateTMP =str(datetime.datetime.now().strftime("%H:%M"))
+    
 
-    dateTMP=str(date.today().strftime("%d/%m/%Y"))
-    heure =str(datetime.datetime.now().strftime("%H:%M")) 
-    """ 
     info = json.dumps({"topic": topic, "payload": payload, "date":  dateTMP, "heure": heure})
-
-    print("ok2")
-    response = requests.post('http://172.16.203.109:3000/api/historique/log', json = info,headers=headers) """
-
-    data = {}
-    data['topic'] = topic
-    data['payload'] = payload
-    data['date'] = dateTMP
-    data['heure'] = heure
-    info = json.dumps(data)
-
-    response = requests.post('http://172.16.203.109:3000/api/historique/log', data = info,headers=headers)
+    print(info)
+    print("ok1")
+    """ response = requests.post('http://172.16.203.109:3000/api/historique/log', json = info,headers=headers) """
+    response = requests.post('http://172.16.203.109:3000/api/rfid/authRFID', json = info,headers=headers)
+    print("ok2")    
     print (response)
     if topic == "demande/rfid":  
-        codeRFID = json.loads(str(message.payload.decode("utf-8")))
-        response = requests.post('http://172.16.203.109:3000/api/rfid/authRFID', json = codeRFID,headers=headers)
-        if(response.text != "-1"):
+        response = requests.post('http://172.16.203.109:3000/api/rfid/authRFID', json = info,headers=headers)
+        """ ici on verifie si le code rfid est bon"""
+        """ if(response.text != "-1"):
             client.publish("zigbee2mqtt/0x00124b0023428a8a/set","{\"state\": \"ON\"}")
             time.sleep(1)
-            client.publish("zigbee2mqtt/0x00124b0023428a8a/set","{\"state\": \"OFF\"}")
+            client.publish("zigbee2mqtt/0x00124b0023428a8a/set","{\"state\": \"OFF\"}") """
     else:
         print("Code not found")
 

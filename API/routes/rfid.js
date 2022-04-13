@@ -64,11 +64,6 @@ router.post('/authRFID', checkAuthRFID, (req, res) => {
 
 // Vérifie si le code rfid est correct
 async function checkAuthRFID(req, res, next) {
-    console.log("req.body")
-    console.log(req.body)
-    console.log("req.body.codeRFID")
-    console.log(req.body.codeRFID)
-
     let reponse
     try {
         reponse = await RFID.find({ "codeRFID": req.body.codeRFID })
@@ -78,9 +73,6 @@ async function checkAuthRFID(req, res, next) {
     } catch (err) {
         return res.status(500).json({ message: err.message })
     }
-    console.log("reponse")
-    console.log(reponse)
-    console.log("reponse2")
     try {
         if (reponse.length > 0) {
             res.reponse = reponse[0].porte

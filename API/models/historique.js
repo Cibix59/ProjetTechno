@@ -3,7 +3,23 @@
 const mongoose = require('mongoose')
 
 const historiqueSchema = new mongoose.Schema({
+    topic: {
+        type: String,
+        required: true
+    },
+    payload: {
+        type: String,
+        required: true
+    },
     date: {
+        type: String,
+        required: true
+    },
+    heure: {
+        type: String,
+        required: true
+    }
+/*     date: {
         type: String,
         required: true
     },
@@ -22,7 +38,7 @@ const historiqueSchema = new mongoose.Schema({
     descriptionPeripherique: {
         type: String,
         required: true
-    }
+    } */
 
 },{collection : "historique"})
 
