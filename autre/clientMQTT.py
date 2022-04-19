@@ -28,14 +28,14 @@ def on_message(client, userdata, message):
 boucle = True
 broker_address="172.16.206.200"
 print("creating new instance")
-client = mqtt.Client("P1") #create new instance
-client.on_message=on_message #attach function to callback
+client = mqtt.Client("P1") #cree une nouvelle instance
+client.on_message=on_message #attache une fonction au callback
 print("connecting to broker")
-client.connect(broker_address) #connect to broker
-client.loop_start() #start the loop
+client.connect(broker_address) #connection au broker
+client.loop_start() #demarre la boucle
 while boucle :
-    client.subscribe("esp/rfid")
-    time.sleep(4) # wait
-client.loop_stop() #stop the loop
+    client.subscribe("demande/rfid")
+    time.sleep(4) 
+client.loop_stop() #stop la boucle
 
 

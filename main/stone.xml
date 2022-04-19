@@ -1,0 +1,4 @@
+<?xml version = "1.0" encoding = "utf-8" ?>
+<nom>"capteur rfid 1"</nom>
+<broker>172.16.206.200:1883</broker>
+<description>"c'est un capteur rfid"</description>
