@@ -8,7 +8,11 @@
 #include <thread> // std::thread
 #include <chrono> //Sleep
 
-#include "Stone.h"//todo
+#include "stone.h"
+
+#include "rapidxml.hpp"
+#include "rapidxml_utils.hpp"
+#include <experimental/filesystem>
 
 void *plugIns[1024];
 create_t *create_plugIns[1024];
@@ -53,7 +57,7 @@ int main(int argc, char **argv)
     std::string path = "./";
     std::string ext(".so");
     // passe en revue tout les fichiers du dossier
-    for (const auto &entry : fs::directory_iterator(path))
+    for (const auto &entry : std::experimental::filesystem::directory_iterator(path))
         // si le fichier est un .so, alors
         if (entry.path().extension() == ext)
         {
@@ -100,7 +104,7 @@ int main(int argc, char **argv)
                 fileName += entry.path().filename().replace_extension("xml.");
                 fileName += std::to_string(jj);
 
-                if (std::filesystem::exists(fileName))
+                if (std::experimental::filesystem::exists(fileName))
                 {
                     cout << "File exist: " << fileName << "\n";
 
