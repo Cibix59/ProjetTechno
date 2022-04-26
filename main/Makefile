@@ -8,8 +8,8 @@
 
 all: TestStone run
 
-TestStone:  main.cpp MySerial.cpp panelAddon.hpp plugInFumee.so
-	g++	-fPIC -std=c++2a -o TestStone MySerial.cpp  main.cpp -lpthread -ldl
+TestStone:  main.cpp MySerial.cpp stone.cpp panelAddon.hpp plugInFumee.so
+	g++	-fPIC -std=c++2a -o TestStone MySerial.cpp stone.cpp main.cpp -lpthread -ldl
 
 plugInFumee.so: plugInFumee.cpp panelAddon.hpp
 	$(CXX) $(CXXFLAGS) -fPIC -shared -o plugInFumee.so plugInFumee.cpp

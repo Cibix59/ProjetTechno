@@ -414,7 +414,7 @@ int main(int argc, char **argv)
 
   /* char ComPortName[] = {"/dev/ttyUSB0"}; */
   char ComPortName[] = {"/dev/"};
-  int valRet = stone.init(ComPortName, 115200);
+  int valRet = stone.init(ComPortName/* serialPort */, 115200);
   if (valRet == -1)
   {
     return (0);
@@ -484,7 +484,7 @@ int main(int argc, char **argv)
         fileName += entry.path().filename().replace_extension("xml.");
         fileName += std::to_string(jj);
 
-        if (std::experimental::filesystem::exists(fileName))
+        if (fs::exists(fileName))
         {
           cout << "File exist: " << fileName << "\n";
 
