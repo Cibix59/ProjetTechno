@@ -6,19 +6,17 @@
 # Licensed under the GNU GPL.
 
 
-all: TestStone run
 
-TestStone:  main.cpp MySerial.cpp panelAddon.hpp plugInFumee.so
-	g++	-fPIC -std=c++2a -o TestStone MySerial.cpp  main.cpp -lpthread -ldl
+example: main.cpp panelAddon.hpp plugInFumee.so
+	$(CXX) $(CXXFLAGS)	-fPIC -o example main.cpp -ldl -lpthread
 
 plugInFumee.so: plugInFumee.cpp panelAddon.hpp
 	$(CXX) $(CXXFLAGS) -fPIC -shared -o plugInFumee.so plugInFumee.cpp
 
 clean:
-# 	rm -f SerialPort.so
+	rm -f example plugInFumee.so
 
 run:
-	./TestStone ttyUSB0
+	./example
 
-# 	.PHONY: run clean
-.PHONY: run clean
+.PHONY: clean
