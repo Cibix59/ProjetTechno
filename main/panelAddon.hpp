@@ -23,6 +23,7 @@ public:
     }
 
     virtual double area() const = 0;
+    virtual int test();
 };
 
 // the types of the class factories

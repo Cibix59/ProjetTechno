@@ -404,17 +404,16 @@ int main(int argc, char **argv)
   using std::cout;
 
   char serialPort[255];
-  strcpy(serialPort, "/dev/"); 
+  strcpy(serialPort, "/dev/");
   strcat(serialPort, argv[1]);
 
   cout << std::string("Serial port used: ") << serialPort << "\n";
 
   mySerial = new MySerial(serialPort);
 
-
   /* char ComPortName[] = {"/dev/ttyUSB0"}; */
   char ComPortName[] = {"/dev/"};
-  int valRet = stone.init(ComPortName/* serialPort */, 115200);
+  int valRet = stone.init(ComPortName /* serialPort */, 115200);
   if (valRet == -1)
   {
     return (0);
@@ -444,7 +443,6 @@ int main(int argc, char **argv)
       std::cout << "\nLibrarie trouvee: " << entry.path() << std::endl;
 
       // Essai de loader la librarie
-      //  load the plugInFumee library
       std::string libraryFileName = entry.path();
       // ajoute la librairie au tableau des librairies
       plugIns[NbrePlugIns] = dlopen(libraryFileName.c_str(), RTLD_LAZY);
@@ -458,22 +456,6 @@ int main(int argc, char **argv)
       // reset errors
       dlerror();
 
-      // load the symbols
-      create_plugIns[NbrePlugIns] = (create_t *)dlsym(plugIns[NbrePlugIns], "create");
-      const char *dlsym_error = dlerror();
-      if (dlsym_error)
-      {
-        cerr << "Cannot load symbol create: " << dlsym_error << '\n';
-        return 1;
-      }
-
-      destroy_plugIns[NbrePlugIns] = (destroy_t *)dlsym(plugIns[NbrePlugIns], "destroy");
-      dlsym_error = dlerror();
-      if (dlsym_error)
-      {
-        cerr << "Cannot load symbol destroy: " << dlsym_error << '\n';
-        return 1;
-      }
 
       // Trouver tous les fichiers Xml correspendants (maximum de 10 pour l'instant)
       int vRet = 0;
@@ -491,6 +473,8 @@ int main(int argc, char **argv)
           addon[NbreAddon] = create_plugIns[NbrePlugIns]();
 
           vRet = addon[NbreAddon]->init(fileName, &stone);
+          std::cout << "\npendant init part 0" << std::endl;
+          addon[NbreAddon]->test();
           if (vRet < 0)
           {
             cerr << "Initialisation addon failed: " << vRet << '\n';
@@ -503,12 +487,19 @@ int main(int argc, char **argv)
       NbrePlugIns++;
     }
 
+  std::cout << "\navant init" << std::endl;
   // Parcourir les plugsins et les initialiser
   for (int i = 0; i < NbreAddon; i++)
   {
-    addon[i]->set_side_length(7);
-    cout << "The area is: " << addon[i]->area() << '\n';
+    std::cout << "\npendant init" << std::endl;
+    // addon[i]->set_side_length(7);
+    std::cout << "\npendant init part 2 " << std::endl;
+    cout << "The test is ..... : " << std::to_string(addon[i]->test()) << '\n';
   }
+
+  std::cout << "\napres init" << std::endl;
+
+  /*   std::cout << "\nLibrarie trouvee: " << std::to_string(plugIns[1]->test()) << std::endl; */
 
   /*     setUpStonePanel(); */
 

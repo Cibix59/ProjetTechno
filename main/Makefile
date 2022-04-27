@@ -8,11 +8,14 @@
 
 all: TestStone run
 
-TestStone:  main.cpp MySerial.cpp stone.cpp panelAddon.hpp plugInFumee.so
+TestStone:  main.cpp MySerial.cpp stone.cpp panelAddon.hpp plugInFumee.so plugInPorte.so
 	g++	-fPIC -std=c++2a -o TestStone MySerial.cpp stone.cpp main.cpp -lpthread -ldl
 
 plugInFumee.so: plugInFumee.cpp panelAddon.hpp
 	$(CXX) $(CXXFLAGS) -fPIC -shared -o plugInFumee.so plugInFumee.cpp
+
+plugInPorte.so: plugInPorte.cpp panelAddon.hpp
+	$(CXX) $(CXXFLAGS) -fPIC -shared -o plugInPorte.so plugInPorte.cpp
 
 clean:
 # 	rm -f SerialPort.so

@@ -1,20 +1,26 @@
 #include "panelAddon.hpp"
 #include <cmath>
 
-class plugInFumee : public panelAddon {
+class plugInFumee : public panelAddon
+{
 public:
-    virtual double area() const {
+    virtual double area() const
+    {
         return side_length_ * side_length_ * sqrt(3) / 2;
+    }
+    int test()
+    {
+        return 45;
     }
 };
 
-
-// the class factories
-extern "C" panelAddon* create() {
+/* // the class factories
+extern "C" panelAddon *create()
+{
     return new plugInFumee;
 }
 
-
-extern "C" void destroy(panelAddon* p) {
+extern "C" void destroy(panelAddon *p)
+{
     delete p;
-}
+} */
