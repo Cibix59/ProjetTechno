@@ -36,6 +36,7 @@ public:
         xmlDescription = (doc.first_node("description") ? doc.first_node("description")->value() : "");
         std::cout << xmlDescription << std::endl;
         // stone
+        
         return 0;
     };
     virtual double area() const
