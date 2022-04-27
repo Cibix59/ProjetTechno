@@ -456,34 +456,55 @@ int main(int argc, char **argv)
       // reset errors
       dlerror();
 
+      // load the symbols
+      create_plugIns[NbrePlugIns] = (create_t *)dlsym(plugIns[NbrePlugIns], "create");
+      const char *dlsym_error = dlerror();
+      if (dlsym_error)
+      {
+        cerr << "Cannot load symbol create: " << dlsym_error << '\n';
+        return 1;
+      }
+
+      destroy_plugIns[NbrePlugIns] = (destroy_t *)dlsym(plugIns[NbrePlugIns], "destroy");
+      dlsym_error = dlerror();
+      if (dlsym_error)
+      {
+        cerr << "Cannot load symbol destroy: " << dlsym_error << '\n';
+        return 1;
+      }
 
       // Trouver tous les fichiers Xml correspendants (maximum de 10 pour l'instant)
       int vRet = 0;
-      for (int jj = 0; jj < 10; jj++)
+      /*       for (int jj = 0; jj < 10; jj++)
+            { */
+      std::string fileName = entry.path().parent_path();
+      fileName += std::string("/");
+      fileName += entry.path().filename().replace_extension("xml");
+      /* fileName += std::to_string(jj); */
+
+      std::cout << fileName << std::endl;
+
+      if (fs::exists(fileName))
       {
-        std::string fileName = entry.path().parent_path();
-        fileName += std::string("/");
-        fileName += entry.path().filename().replace_extension("xml.");
-        fileName += std::to_string(jj);
+        cout << "File exist: " << fileName << "\n";
 
-        if (fs::exists(fileName))
+        addon[NbreAddon] = create_plugIns[NbrePlugIns]();
+        std::cout << "\npendant init part -1" << std::endl;
+        vRet = addon[NbreAddon]->init(fileName, &stone);
+        std::cout << "\npendant init part 0" << std::endl;
+        /* addon[NbreAddon]->test(); */
+        if (vRet < 0)
         {
-          cout << "File exist: " << fileName << "\n";
-
-          addon[NbreAddon] = create_plugIns[NbrePlugIns]();
-
-          vRet = addon[NbreAddon]->init(fileName, &stone);
-          std::cout << "\npendant init part 0" << std::endl;
-          addon[NbreAddon]->test();
-          if (vRet < 0)
-          {
-            cerr << "Initialisation addon failed: " << vRet << '\n';
-            continue;
-          }
-
-          NbreAddon++;
+          cerr << "Initialisation addon failed: " << vRet << '\n';
+          continue;
         }
+        // test ici
+       /*  addon[NbreAddon]->test(); */
+        cout << "The test is ..... : " << std::to_string(addon[NbreAddon]->test()) << '\n';
+        NbreAddon++;
       }
+      /*   } */
+
       NbrePlugIns++;
     }
 
@@ -493,8 +514,9 @@ int main(int argc, char **argv)
   {
     std::cout << "\npendant init" << std::endl;
     // addon[i]->set_side_length(7);
+
     std::cout << "\npendant init part 2 " << std::endl;
-    cout << "The test is ..... : " << std::to_string(addon[i]->test()) << '\n';
+    /* cout << "The test is ..... : " << std::to_string(addon[i]->test()) << '\n'; */
   }
 
   std::cout << "\napres init" << std::endl;
