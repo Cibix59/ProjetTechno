@@ -475,48 +475,44 @@ int main(int argc, char **argv)
 
       // Trouver tous les fichiers Xml correspendants (maximum de 10 pour l'instant)
       int vRet = 0;
-      /*       for (int jj = 0; jj < 10; jj++)
-            { */
-      std::string fileName = entry.path().parent_path();
-      fileName += std::string("/");
-      fileName += entry.path().filename().replace_extension("xml");
-      /* fileName += std::to_string(jj); */
-
-      std::cout << fileName << std::endl;
-
-      if (fs::exists(fileName))
+      for (int jj = 0; jj < 10; jj++)
       {
-        cout << "File exist: " << fileName << "\n";
+        std::string fileName = entry.path().parent_path();
+        fileName += std::string("/");
+        fileName += entry.path().filename().replace_extension("xml");
+        /* fileName += std::to_string(jj); */
 
-        addon[NbreAddon] = create_plugIns[NbrePlugIns]();
-        std::cout << "\npendant init part -1" << std::endl;
-        vRet = addon[NbreAddon]->init(fileName, &stone);
-        std::cout << "\npendant init part 0" << std::endl;
-        /* addon[NbreAddon]->test(); */
-        if (vRet < 0)
+        std::cout << fileName << std::endl;
+
+        if (fs::exists(fileName))
         {
-          cerr << "Initialisation addon failed: " << vRet << '\n';
-          continue;
+          cout << "File exist: " << fileName << "\n";
+
+          addon[NbreAddon] = create_plugIns[NbrePlugIns]();
+          std::cout << "\npendant init part -1" << std::endl;
+          vRet = addon[NbreAddon]->init(fileName, &stone);
+          std::cout << "\npendant init part 0" << std::endl;
+          /* addon[NbreAddon]->test(); */
+          if (vRet < 0)
+          {
+            cerr << "Initialisation addon failed: " << vRet << '\n';
+            continue;
+          }
+          // test ici
+          /*  addon[NbreAddon]->test(); */
+          cout << "The test is ..... : " << std::to_string(addon[NbreAddon]->test()) << '\n';
+          NbreAddon++;
         }
-        // test ici
-       /*  addon[NbreAddon]->test(); */
-        cout << "The test is ..... : " << std::to_string(addon[NbreAddon]->test()) << '\n';
-        NbreAddon++;
       }
-      /*   } */
 
       NbrePlugIns++;
     }
 
   std::cout << "\navant init" << std::endl;
-  // Parcourir les plugsins et les initialiser
+  // Parcourir les plugins et les initialiser
   for (int i = 0; i < NbreAddon; i++)
   {
-    std::cout << "\npendant init" << std::endl;
-    // addon[i]->set_side_length(7);
-
-    std::cout << "\npendant init part 2 " << std::endl;
-    /* cout << "The test is ..... : " << std::to_string(addon[i]->test()) << '\n'; */
+/*     addon[i]->init(); */
   }
 
   std::cout << "\napres init" << std::endl;

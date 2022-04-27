@@ -7,6 +7,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "rapidxml.hpp"
+#include "rapidxml_utils.hpp"
+
 using namespace std;
 
 class plugInPorte : public panelAddon
@@ -16,15 +19,22 @@ private:
 
 public:
     plugInPorte() : panelAddon(){};
+    string xmlDescription;
 
-    int test(){
+    int test()
+    {
         return 42;
     }
 
-    int init(std::string filename, Stone *stone)
+    int init(std::string fileName,Stone* stone)
     {
         // mqtt
         // xml
+        rapidxml::file<> xmlFile(fileName.c_str());
+        rapidxml::xml_document<> doc;
+        doc.parse<0>(xmlFile.data());
+        xmlDescription = (doc.first_node("description") ? doc.first_node("description")->value() : "");
+        std::cout << xmlDescription << std::endl;
         // stone
         return 0;
     };
@@ -32,10 +42,10 @@ public:
     {
         return side_length_ * side_length_ * sqrt(3) / 2;
     };
-/*     int test()
-    {
-        return 42;
-    }; */
+    /*     int test()
+        {
+            return 42;
+        }; */
 };
 
 // the class factories

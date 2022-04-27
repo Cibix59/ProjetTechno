@@ -35,7 +35,7 @@ client.connect(broker_address) #connection au broker
 client.loop_start() #demarre la boucle
 while boucle :
     client.subscribe("demande/rfid")
-    time.sleep(4) 
+    time.sleep(1) 
 client.loop_stop() #stop la boucle
 
 
