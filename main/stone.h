@@ -16,10 +16,11 @@ struct dataRead
     char line[2048];
 };
 
-class Stone
+class Stone : public MySerial
 {
+    using MySerial::MySerial;
 private:
-    MySerial *serialPort;
+    /*     MySerial *serialPort; */
     int USB;
     char commPortName[80];
     void displayCharString(char *str, int len);
@@ -32,21 +33,26 @@ private:
     void setColor(const char *labelName, unsigned int argb, const char *type);
 
 public:
-    Stone();
+    Stone(std::string portName);
     ~Stone(){};
-    int init(char *comPort,uint speed = 115200);
-    void changePage(const char *pageName,int timeWaitingAfterInMs = 0);
-    int getVersion();
+    int init(char *comPort, uint speed = 115200);
+    void reboot();
+    void firmware();
+    void setHeure();
+    void setText(std::string label,std::string text);
+
+    void changePage(const char *pageName, int timeWaitingAfterInMs = 0);
+
     dataRead getValidsDatasIfExists();
     void sendDatas(const char *dataToSend);
-    void setLabel(const char *labelName,const char *value);
-    void setEnable(const char *labelName,const bool value);
-    void setVisible(const char *labelName,const bool value);
+    void setLabel(const char *labelName, const char *value);
+    void setEnable(const char *labelName, const bool value);
+    void setVisible(const char *labelName, const bool value);
 
-    void setDate(const char *labelName,int annee, int mois,int jour, int heure,int minute,int sec=0);
+    void setDate(const char *labelName, int annee, int mois, int jour, int heure, int minute, int sec = 0);
 
-    void setPosition(const char *labelName,int posX,int posY);
-    void setColorBackground(const char *labelName,unsigned int r,unsigned int g,unsigned int b,unsigned int alpha);
+    void setPosition(const char *labelName, int posX, int posY);
+    void setColorBackground(const char *labelName, unsigned int r, unsigned int g, unsigned int b, unsigned int alpha);
 };
 
 #endif

@@ -14,8 +14,8 @@ TestStone:  main.cpp MySerial.cpp stone.cpp panelAddon.hpp plugInFumee.so plugIn
 plugInFumee.so: plugInFumee.cpp panelAddon.hpp
 	$(CXX) $(CXXFLAGS) -fPIC -shared -o plugInFumee.so plugInFumee.cpp
 
-plugInPorte.so: plugInPorte.cpp panelAddon.hpp
-	$(CXX) $(CXXFLAGS) -fPIC -shared -o plugInPorte.so plugInPorte.cpp
+plugInPorte.so: plugInPorte.cpp panelAddon.hpp stone.cpp MySerial.cpp
+	$(CXX) $(CXXFLAGS) -fPIC -shared -o plugInPorte.so plugInPorte.cpp stone.cpp MySerial.cpp
 
 clean:
 # 	rm -f SerialPort.so

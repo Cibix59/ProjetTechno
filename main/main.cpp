@@ -61,7 +61,7 @@ int NbrePlugIns = 0;
 int NbreAddon = 0;
 panelAddon *addon[1024];
 
-static Stone stone; // todo
+static Stone *stone; // todo
 
 std::string stoneVersion;
 std::string xmlVersion;
@@ -93,7 +93,6 @@ void menu()
   std::cout << " 5. labelTest. \n";
   std::cout << " 4. SetHeure.\n";
   std::cout << " 3. Reboot.\n";
-  std::cout << " 2. Hello.\n";
   std::cout << " 1. Lire la version du FirmWare.\n";
   std::cout << " 0. Exit.\n";
   std::cout << "\t";
@@ -102,68 +101,22 @@ void menu()
 
   if (selection == 1)
   { // Demande la version du FirmWare
-    char cmdFormat2[99];
-    strcpy(cmdFormat2, "ST<{\"cmd_code\":\"sys_version\",\"type\":\"system\"}>ET");
-    std::cout << cmdFormat2 << "\n";
-    mySerial->writeIt((char *)cmdFormat2);
+    stone->firmware();
     menu();
   }
-
-  if (selection == 2)
-  { // Demande test
-    char cmdFormat2[99];
-    strcpy(cmdFormat2, "ST<{\"cmd_code\":\"sys_hello\",\"type\":\"system\"}>ET");
-    std::cout << cmdFormat2 << "\n";
-    mySerial->writeIt((char *)cmdFormat2);
-    menu();
-  }
-
   if (selection == 3)
   { // Demande reboot
-    char cmdFormat2[99];
-    strcpy(cmdFormat2, "ST<{\"cmd_code\":\"sys_reboot\",\"type\":\"system\"}>ET");
-    std::cout << cmdFormat2 << "\n";
-    mySerial->writeIt((char *)cmdFormat2);
+    stone->reboot();
     menu();
   }
 
   if (selection == 4)
   { // Demande set heure
-    char cmdFormat2[99];
-    strcpy(cmdFormat2, "ST<{\"cmd_code\":\"set_date\",\"type\":\"digit_clock\",\"widget\":\"digit_clock\",\"date\":\"2022-02-09 13:58:30\"}>ET");
-    std::cout << cmdFormat2 << "\n";
-    mySerial->writeIt((char *)cmdFormat2);
+    stone->setHeure();
     menu();
   }
   if (selection == 5)
-  { // Demande set heure
-    char cmdFormat2[99];
-    strcpy(cmdFormat2, "ST<{\"cmd_code\":\"set_text\",\"type\":\"label\",\"widget\":\"label1\",\"text\":\"test\"}>ET");
-    std::cout << cmdFormat2 << "\n";
-    mySerial->writeIt((char *)cmdFormat2);
-    menu();
-  }
-  if (selection == 6)
-  { // Demande set heure
-    char cmdFormat2[99];
-    strcpy(cmdFormat2, "ST<{\"cmd_code\":\"set_xy\",\"type\":\"label\",\"widget\":\"label1\",\"x\":150,\"y\":150}>ET");
-    std::cout << cmdFormat2 << "\n";
-    mySerial->writeIt((char *)cmdFormat2);
-    menu();
-  }
-
-  if (selection == 7)
-  { // Demande set heure
-    char cmdFormat2[99];
-    strcpy(cmdFormat2, "ST<{\"cmd_code\":\"set_rotation\",\"type\":\"image\",\"widget\":\"logocegep\",\"rotation\":90}>ET");
-    std::cout << cmdFormat2 << "\n";
-    mySerial->writeIt((char *)cmdFormat2);
-
-    sleep(200);
-
-    strcpy(cmdFormat2, "ST<{\"cmd_code\":\"set_rotation\",\"type\":\"image\",\"widget\":\"logocegep\",\"rotation\":150}>ET");
-    std::cout << cmdFormat2 << "\n";
-    mySerial->writeIt((char *)cmdFormat2);
+  { // Change un label
 
     menu();
   }
@@ -410,14 +363,16 @@ int main(int argc, char **argv)
   cout << std::string("Serial port used: ") << serialPort << "\n";
 
   mySerial = new MySerial(serialPort);
-
+  stone = new Stone(serialPort);
   /* char ComPortName[] = {"/dev/ttyUSB0"}; */
   char ComPortName[] = {"/dev/"};
-  int valRet = stone.init(ComPortName /* serialPort */, 115200);
-  if (valRet == -1)
-  {
-    return (0);
-  }
+  // int valRet = stone.init(ComPortName /* serialPort */, 115200);
+  // todo : en test
+
+  /*   if (valRet == -1)
+    {
+      return (0);
+    } */
 
   // return(0);
   // Lecture des configurations Xml du programme
@@ -490,7 +445,7 @@ int main(int argc, char **argv)
 
           addon[NbreAddon] = create_plugIns[NbrePlugIns]();
           std::cout << "\npendant init part -1" << std::endl;
-          vRet = addon[NbreAddon]->init(fileName, &stone);
+          vRet = addon[NbreAddon]->init(fileName, stone);
           std::cout << "\npendant init part 0" << std::endl;
           /* addon[NbreAddon]->test(); */
           if (vRet < 0)
@@ -512,7 +467,7 @@ int main(int argc, char **argv)
   // Parcourir les plugins et les initialiser
   for (int i = 0; i < NbreAddon; i++)
   {
-/*     addon[i]->init(); */
+    /*     addon[i]->init(); */
   }
 
   std::cout << "\napres init" << std::endl;

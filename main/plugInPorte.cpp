@@ -1,6 +1,7 @@
 #include "panelAddon.hpp"
 #include <cmath>
 #include "stone.h"
+#include <dlfcn.h>
 
 #include <string>
 #include <iostream>
@@ -23,10 +24,11 @@ public:
 
     int test()
     {
+        stone->reboot();
         return 42;
     }
 
-    int init(std::string fileName,Stone* stone)
+    int init(std::string fileName, Stone *stone)
     {
         // mqtt
         // xml
@@ -35,8 +37,10 @@ public:
         doc.parse<0>(xmlFile.data());
         xmlDescription = (doc.first_node("description") ? doc.first_node("description")->value() : "");
         std::cout << xmlDescription << std::endl;
+
         // stone
-        
+        this->stone = stone;
+
         return 0;
     };
     virtual double area() const
