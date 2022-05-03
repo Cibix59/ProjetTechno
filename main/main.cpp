@@ -454,11 +454,11 @@ int main(int argc, char **argv)
           }
           // test ici
           std::cout << "\npendant init part -1" << std::endl;
-          addon[NbreAddon]->startMqtt();
+          //addon[NbreAddon]->startMqtt();
           std::cout << "\npendant init part 0" << std::endl;
-          addon[NbreAddon]->sendInfos("testtt");
+/*           addon[NbreAddon]->sendInfos("testtt");
           addon[NbreAddon]->stopMqtt();
-          cout << "The test is ..... : " << std::to_string(addon[NbreAddon]->test()) << '\n';
+          cout << "The test is ..... : " << std::to_string(addon[NbreAddon]->test()) << '\n'; */
           /* cout << "The test is ..... : " << std::to_string(addon[NbreAddon]->test()) << '\n'; */
           NbreAddon++;
         }
@@ -488,6 +488,8 @@ int main(int argc, char **argv)
   // Détruire les addOns
   for (int i = 0; i < NbreAddon; i++)
   {
+    //todo terminer correctement tout les addons
+    addon[i]->stopMqtt();
     delete addon[i];
     std::cout << "\nAddOn détruit : " << i << std::endl;
   }

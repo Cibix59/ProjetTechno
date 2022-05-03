@@ -28,40 +28,40 @@ public:
     void startMqtt()
     {
         mqtt = new myMqtt("raspberry", "rasp/test", "172.16.226.101", 1883);
-        mqtt->send_msg("msg");
+/*         mqtt->send_msg("msg");
+        delete mqtt; */
+    }
+
+    void stopMqtt()
+    {
         delete mqtt;
     }
-    /*
-        void stopMqtt()
-        {
-            delete mqtt;
-        }
 
-        void sendInfos(const char *msg)
+    void sendInfos(const char *msg)
+    {
+        try
         {
-            try
-            {
-                mqtt->send_msg(msg);
-            }
-            catch (const exception &e)
-            {
-                printf("Erreur dans l'envoie du message");
-            }
+            mqtt->send_msg(msg);
         }
-
-        bool getInfos()
+        catch (const exception &e)
         {
-            try
-            {
-                bool set = mqtt->receive_msg();
-                return set;
-            }
-            catch (const exception &e)
-            {
-                printf("Erreur dans la réception des messages");
-                return 0;
-            }
-        } */
+            printf("Erreur dans l'envoie du message");
+        }
+    }
+
+    bool getInfos()
+    {
+        try
+        {
+            bool set = mqtt->receive_msg();
+            return set;
+        }
+        catch (const exception &e)
+        {
+            printf("Erreur dans la réception des messages");
+            return 0;
+        }
+    }
 
     int test()
     {
@@ -72,6 +72,22 @@ public:
     int init(std::string fileName, Stone *stone)
     {
         // mqtt
+        startMqtt();
+        sendInfos("testOKK");
+        getInfos();
+
+/*         while (true)
+        {
+            if(getInfos()){
+                std::cout << "\nrecu"<< std::endl;
+            }else{
+                std::cout << "\nNON"<< std::endl;
+            }
+            
+            sleep(100);
+        }
+         */
+
         // xml
         rapidxml::file<> xmlFile(fileName.c_str());
         rapidxml::xml_document<> doc;
@@ -81,6 +97,9 @@ public:
 
         // stone
         this->stone = stone;
+
+        //todo : set la description
+        /* lbldescriptionrfid */
 
         return 0;
     };
