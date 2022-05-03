@@ -444,18 +444,22 @@ int main(int argc, char **argv)
           cout << "File exist: " << fileName << "\n";
 
           addon[NbreAddon] = create_plugIns[NbrePlugIns]();
-          std::cout << "\npendant init part -1" << std::endl;
+
           vRet = addon[NbreAddon]->init(fileName, stone);
-          std::cout << "\npendant init part 0" << std::endl;
-          /* addon[NbreAddon]->test(); */
+
           if (vRet < 0)
           {
             cerr << "Initialisation addon failed: " << vRet << '\n';
             continue;
           }
           // test ici
-          /*  addon[NbreAddon]->test(); */
+          std::cout << "\npendant init part -1" << std::endl;
+          addon[NbreAddon]->startMqtt();
+          std::cout << "\npendant init part 0" << std::endl;
+          addon[NbreAddon]->sendInfos("testtt");
+          addon[NbreAddon]->stopMqtt();
           cout << "The test is ..... : " << std::to_string(addon[NbreAddon]->test()) << '\n';
+          /* cout << "The test is ..... : " << std::to_string(addon[NbreAddon]->test()) << '\n'; */
           NbreAddon++;
         }
       }

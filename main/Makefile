@@ -8,14 +8,14 @@
 
 all: TestStone run
 
-TestStone:  main.cpp MySerial.cpp stone.cpp panelAddon.hpp plugInFumee.so plugInPorte.so
-	g++	-fPIC -std=c++2a -o TestStone MySerial.cpp stone.cpp main.cpp -lpthread -ldl
+TestStone:  main.cpp MySerial.cpp stone.cpp panelAddon.hpp plugInFumee.so plugInPorte.so myMqtt.cpp
+	g++	-fPIC -std=c++2a -o TestStone MySerial.cpp stone.cpp main.cpp myMqtt.cpp -lpthread -ldl -lmosquittopp
 
 plugInFumee.so: plugInFumee.cpp panelAddon.hpp
 	$(CXX) $(CXXFLAGS) -fPIC -shared -o plugInFumee.so plugInFumee.cpp
 
-plugInPorte.so: plugInPorte.cpp panelAddon.hpp stone.cpp MySerial.cpp
-	$(CXX) $(CXXFLAGS) -fPIC -shared -o plugInPorte.so plugInPorte.cpp stone.cpp MySerial.cpp
+plugInPorte.so: plugInPorte.cpp panelAddon.hpp stone.cpp MySerial.cpp myMqtt.cpp
+	$(CXX) $(CXXFLAGS) -fPIC -shared -o plugInPorte.so plugInPorte.cpp stone.cpp MySerial.cpp myMqtt.cpp
 
 clean:
 # 	rm -f SerialPort.so

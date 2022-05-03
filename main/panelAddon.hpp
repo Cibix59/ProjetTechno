@@ -18,6 +18,13 @@ public:
 
     virtual int init(std::string fileName,Stone* stone) {}
 
+    virtual void startMqtt() {};
+    virtual void stopMqtt() {};
+    virtual void sendInfos(const char* msg) {};
+
+    virtual bool getInfos() {return 0;};
+    
+
     void set_side_length(double side_length) {
         side_length_ = side_length;
     }
