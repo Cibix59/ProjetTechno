@@ -20,17 +20,9 @@ class Stone : public MySerial
 {
     using MySerial::MySerial;
 private:
-    /*     MySerial *serialPort; */
-    char commPortName[80];
-    void displayCharString(char *str, int len);
-
-    int formatStrCommand(const char *cmd_code, const char *widget, char *buffer);
-    ssize_t read_port(int fd, uint8_t *buffer, size_t size);
+    //todo : transferer ces methodes
     std::string charToString(char str, std::string formatStr);
     std::string intToString(int value, std::string formatStr);
-
-
-
 public:
     Stone(std::string portName);
     ~Stone(){};
@@ -40,7 +32,6 @@ public:
     void setHeure();
     void setText(char* label,char* text);
     datasRead getValidsDatasIfExists();
-
 
 };
 
