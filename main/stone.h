@@ -21,7 +21,6 @@ class Stone : public MySerial
     using MySerial::MySerial;
 private:
     /*     MySerial *serialPort; */
-    int USB;
     char commPortName[80];
     void displayCharString(char *str, int len);
 
