@@ -28,12 +28,27 @@ public:
     void startMqtt()
     {
         mqtt = new myMqtt("raspberry", "rasp/test", "172.16.226.101", 1883);
-/*         mqtt->send_msg("msg");
-        delete mqtt; */
+        /*         mqtt->send_msg("msg");
+                delete mqtt; */
     }
 
     void stopMqtt()
     {
+        delete mqtt;
+    }
+
+
+    void ouvrirPorte()
+    {
+        //todo : verifier si le mqtt est lancé
+        mqtt = new myMqtt("raspberry", "zigbee2mqtt/0x00124b0023428a8a/set", "172.16.226.101", 1883);
+        mqtt->send_msg( "{\"state\": \"ON\"}");
+        delete mqtt;
+    }
+    void fermerPorte()
+    {
+        mqtt = new myMqtt("raspberry", "zigbee2mqtt/0x00124b0023428a8a/set", "172.16.226.101", 1883);
+        mqtt->send_msg("{\"state\": \"OFF\"}");
         delete mqtt;
     }
 
@@ -72,21 +87,21 @@ public:
     int init(std::string fileName, Stone *stone)
     {
         // mqtt
-        startMqtt();
-        sendInfos("testOKK");
-        getInfos();
+        /*         startMqtt();
+                sendInfos("testOKK"); */
+        // getInfos();
 
-/*         while (true)
-        {
-            if(getInfos()){
-                std::cout << "\nrecu"<< std::endl;
-            }else{
-                std::cout << "\nNON"<< std::endl;
-            }
-            
-            sleep(100);
-        }
-         */
+        /*         while (true)
+                {
+                    if(getInfos()){
+                        std::cout << "\nrecu"<< std::endl;
+                    }else{
+                        std::cout << "\nNON"<< std::endl;
+                    }
+
+                    sleep(100);
+                }
+                 */
 
         // xml
         rapidxml::file<> xmlFile(fileName.c_str());
@@ -97,11 +112,12 @@ public:
 
         // stone
         this->stone = stone;
+        stone->setText("lblhistoriquerfid", "test Historique");
 
-        //todo : set la description
+        // todo : set la description
         /* lbldescriptionrfid */
 
-        return 0;
+        return 42;
     };
     virtual double area() const
     {

@@ -67,6 +67,7 @@ void myMqtt::on_publish(int mid)
 
 void myMqtt::on_message(const mosquitto_message *message)
 {
+  
   cout << "Subscriber received message of topic: " << message->topic << " Data: " << reinterpret_cast<char *>(message->payload) << "\n";
 }
 

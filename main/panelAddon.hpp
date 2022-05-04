@@ -6,7 +6,8 @@
 #include <string.h>
 #include "stone.h"
 
-class panelAddon {
+class panelAddon
+{
 protected:
     double side_length_;
 
@@ -16,16 +17,18 @@ public:
 
     virtual ~panelAddon() {}
 
-    virtual int init(std::string fileName,Stone* stone) {}
+    virtual int init(std::string fileName, Stone *stone) {}
 
-    virtual void startMqtt() {};
-    virtual void stopMqtt() {};
-    virtual void sendInfos(const char* msg) {};
+    virtual void startMqtt(){};
+    virtual void stopMqtt(){};
+    virtual void ouvrirPorte(){};
+    virtual void fermerPorte(){};
+    virtual void sendInfos(const char *msg){};
 
-    virtual bool getInfos() {return 0;};
-    
+    virtual bool getInfos() { return 0; };
 
-    void set_side_length(double side_length) {
+    void set_side_length(double side_length)
+    {
         side_length_ = side_length;
     }
 
@@ -34,7 +37,7 @@ public:
 };
 
 // the types of the class factories
-typedef panelAddon* create_t();
-typedef void destroy_t(panelAddon*);
+typedef panelAddon *create_t();
+typedef void destroy_t(panelAddon *);
 
 #endif

@@ -7,7 +7,7 @@
 
 #include "MySerial.h"
 
-struct dataRead
+struct datasRead
 {
     int id; // 0 = pas de données
     char command[80];
@@ -39,11 +39,8 @@ public:
     void reboot();
     void firmware();
     void setHeure();
-    void setText(std::string label,std::string text);
-
-
-
-    dataRead getValidsDatasIfExists();
+    void setText(char* label,char* text);
+    datasRead getValidsDatasIfExists();
 
 
 };
