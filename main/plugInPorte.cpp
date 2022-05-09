@@ -12,8 +12,7 @@
 #include "rapidxml_utils.hpp"
 
 #include "myMqtt.hpp"
-/* #include <curlpp/cURLpp.hpp>
-#include <curlpp/Options.hpp> */
+#include <curl/curl.h>
 
 using namespace std;
 
@@ -29,6 +28,16 @@ public:
     string xmlTopic = "zigbee2mqtt/0x00124b0023428a8a/set";
     string xmlIp = "172.16.226.101";
     int xmlPort = 1883;
+
+    CURL *curl;
+    CURLcode res;
+    std::string readBuffer;
+
+    static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
+    {
+        ((std::string *)userp)->append((char *)contents, size * nmemb);
+        return size * nmemb;
+    }
 
     void startMqtt()
     {
@@ -122,20 +131,20 @@ public:
         // stone
         this->stone = stone;
 
-        /* Todo : recup historique depuis API
-                // RAII cleanup
+        curl = curl_easy_init();
+        if (curl)
+        {
+            curl_easy_setopt(curl, CURLOPT_URL, "http://172.16.199.85:3000/api/historique/rfid");
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+            curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+            res = curl_easy_perform(curl);
+            curl_easy_cleanup(curl);
+            std::cout << "readBuffer" << std::endl;
+            std::cout << readBuffer << std::endl;
+        }
 
-                curlpp::Cleanup myCleanup;
-
-                // Send request and get a result.
-                // Here I use a shortcut to get it in a string stream ...
-
-                std::ostringstream os;
-                os << curlpp::options::Url(std::string("http://example.com"));
-
-                string asAskedInQuestion = os.str(); */
         stone->setText("lblhistoriquerfid", "Historique");
-/*         stone->setText("lbldescriptionrfid", "test avec espaces"); */
+        /*         stone->setText("lbldescriptionrfid", "test avec espaces"); */
 
         stone->setText("lbldescriptionrfid", xmlDescription.c_str());
 

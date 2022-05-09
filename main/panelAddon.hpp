@@ -18,7 +18,7 @@ public:
     virtual ~panelAddon() {}
 
     virtual int init(std::string fileName, Stone *stone) {}
-
+    static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp);
     virtual void startMqtt(){};
     virtual void stopMqtt(){};
     virtual void ouvrirPorte(){};

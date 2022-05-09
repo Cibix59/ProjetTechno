@@ -336,14 +336,7 @@ int main(int argc, char **argv)
       NbrePlugIns++;
     }
 
-  std::cout << "\navant init" << std::endl;
-  // Parcourir les plugins et les initialiser
-  for (int i = 0; i < NbreAddon; i++)
-  {
-    /*     addon[i]->init(); */
-  }
 
-  std::cout << "\napres init" << std::endl;
 
   /*   std::cout << "\nLibrarie trouvee: " << std::to_string(plugIns[1]->test()) << std::endl; */
 
