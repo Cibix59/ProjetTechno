@@ -2,5 +2,5 @@
 <nom>"Plugin Porte"</nom>
 <ip>172.16.226.101</ip>
 <port>1883</port>
-<description>"c'est un plugin de porte"</description>
+<description>DescriptionPorte</description>
 <topic>zigbee2mqtt/0x00124b0023428a8a/set</topic>

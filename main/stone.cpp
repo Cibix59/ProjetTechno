@@ -37,9 +37,8 @@ void Stone::setHeure()
   strcpy(cmdFormat2, "ST<{\"cmd_code\":\"set_date\",\"type\":\"digit_clock\",\"widget\":\"digit_clock\",\"date\":\"2022-02-09 13:58:30\"}>ET");
   std::cout << cmdFormat2 << "\n";
   writeIt((char *)cmdFormat2);
-
 }
-void Stone::setText(char *label, char *text)
+void Stone::setText(char *label, const char *text)
 {
   char cmdFormat2[99];
   // std::string tmp =  "ST<{\"cmd_code\":\"set_text\",\"type\":"+label.c_str()+",\"widget\":\"label1\","+text.c_str()+":\"test\"}>ET";
@@ -53,7 +52,18 @@ void Stone::setText(char *label, char *text)
   std::cout << cmdFormat2 << "\n";
   writeIt((char *)cmdFormat2);
 }
+void Stone::OuvrirFenetre(char *fenetre)
+{
+  char cmdFormat2[99];
+  std::stringstream ss;
+  ss << "ST<{\"cmd_code\":\"open_win\",\"widget\":\"" << fenetre << "\"}>ET";
+  std::string commande = ss.str();
 
+  strcpy(cmdFormat2, commande.c_str());
+
+  std::cout << cmdFormat2 << "\n";
+  writeIt((char *)cmdFormat2);
+}
 
 // Lire le contenu disponible sur le port série
 // Retourne les données dans la structure local datasRead
@@ -200,8 +210,8 @@ datasRead Stone::getValidsDatasIfExists()
     strcpy(rd.command, "???????");
     strcpy(rd.name, data);
     rd.type = keyValue;
-    std::cout << "GData TEST : " << rd.id << " " << rd.command << " " << rd.name << " " << rd.type << "\n"; 
-  
+    std::cout << "GData TEST : " << rd.id << " " << rd.command << " " << rd.name << " " << rd.type << "\n";
+
     return (rd);
     break;
   };

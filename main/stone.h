@@ -30,7 +30,8 @@ public:
     void reboot();
     void firmware();
     void setHeure();
-    void setText(char* label,char* text);
+    void OuvrirFenetre(char *fenetre);
+    void setText(char* label,const char *text);
     datasRead getValidsDatasIfExists();
 
 };

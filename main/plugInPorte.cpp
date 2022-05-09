@@ -26,9 +26,9 @@ public:
     class myMqtt *mqtt;
     plugInPorte() : panelAddon(){};
     string xmlDescription;
-    string xmlTopic="zigbee2mqtt/0x00124b0023428a8a/set";
-    string xmlIp="172.16.226.101";
-    int xmlPort=1883;
+    string xmlTopic = "zigbee2mqtt/0x00124b0023428a8a/set";
+    string xmlIp = "172.16.226.101";
+    int xmlPort = 1883;
 
     void startMqtt()
     {
@@ -45,13 +45,13 @@ public:
     void ouvrirPorte()
     {
         // todo : verifier si le mqtt est lancé
-        mqtt = new myMqtt("raspberry", xmlTopic.c_str(),xmlIp.c_str(), 1883);
+        mqtt = new myMqtt("raspberry", xmlTopic.c_str(), xmlIp.c_str(), 1883);
         mqtt->send_msg("{\"state\": \"ON\"}");
         delete mqtt;
     }
     void fermerPorte()
     {
-        mqtt = new myMqtt("raspberry",  xmlTopic.c_str(),xmlIp.c_str(), 1883);
+        mqtt = new myMqtt("raspberry", xmlTopic.c_str(), xmlIp.c_str(), 1883);
         mqtt->send_msg("{\"state\": \"OFF\"}");
         delete mqtt;
     }
@@ -114,28 +114,30 @@ public:
         xmlDescription = (doc.first_node("description") ? doc.first_node("description")->value() : "");
         xmlTopic = (doc.first_node("topic") ? doc.first_node("topic")->value() : "");
         xmlIp = (doc.first_node("ip") ? doc.first_node("ip")->value() : "");
-        //todo : resoudre probleme avec le port
+        // todo : resoudre probleme avec le port
         xmlPort = (int)(doc.first_node("port") ? doc.first_node("port")->value() : "");
-        std::cout << "xmlTopic" << std::endl;
-        std::cout << xmlTopic << std::endl;
+        std::cout << "xmlDescription" << std::endl;
+        std::cout << xmlDescription << std::endl;
 
         // stone
         this->stone = stone;
 
-/* Todo : recup historique depuis API
-        // RAII cleanup
+        /* Todo : recup historique depuis API
+                // RAII cleanup
 
-        curlpp::Cleanup myCleanup;
+                curlpp::Cleanup myCleanup;
 
-        // Send request and get a result.
-        // Here I use a shortcut to get it in a string stream ...
+                // Send request and get a result.
+                // Here I use a shortcut to get it in a string stream ...
 
-        std::ostringstream os;
-        os << curlpp::options::Url(std::string("http://example.com"));
+                std::ostringstream os;
+                os << curlpp::options::Url(std::string("http://example.com"));
 
-        string asAskedInQuestion = os.str(); */
+                string asAskedInQuestion = os.str(); */
+        stone->setText("lblhistoriquerfid", "Historique");
+/*         stone->setText("lbldescriptionrfid", "test avec espaces"); */
 
-        stone->setText("lblhistoriquerfid", "test Historique");
+        stone->setText("lbldescriptionrfid", xmlDescription.c_str());
 
         // todo : set la description
         /* lbldescriptionrfid */
