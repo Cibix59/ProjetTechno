@@ -11,7 +11,7 @@ const historiqueSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    evennement: {
+    topic: {
         type: String,
         required: true
     },
@@ -19,7 +19,7 @@ const historiqueSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    descriptionPeripherique: {
+    payload: {
         type: String,
         required: true
     }

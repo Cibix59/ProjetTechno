@@ -8,6 +8,7 @@ import datetime
 
 ############
 def on_message(client, userdata, message):
+    print("ok1")
     print("message received " ,str(message.payload.decode("utf-8")))
     print("message topic=",message.topic)
     print("message qos=",message.qos)
@@ -25,7 +26,7 @@ def on_message(client, userdata, message):
              'User-Agent': 'python-requests/2.4.3 CPython/3.4.0',
              'X-Request-Id': 'xx-xx-xx'}
     topic = str(message.topic)
-    print("ok1")
+    print("ok2")
 
 
     dateTMP = str(date.today().strftime("%d/%m/%Y"))
@@ -42,6 +43,7 @@ def on_message(client, userdata, message):
     data['date'] = dateTMP
     data['heure'] = heure
     if topic == "demande/rfid":##Clément
+        data['nomPeripherique'] = "rfid"
         info = json.dumps(data)
         response = requests.post('http://172.16.199.85:3000/api/historique/log', data = info,headers=headers)
         print (response)
