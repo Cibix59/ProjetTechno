@@ -33,7 +33,7 @@ def on_message(client, userdata, message):
     """ 
     info = json.dumps({"topic": topic, "payload": payload, "date":  dateTMP, "heure": heure})
     print("ok2")
-    response = requests.post('http://172.16.203.109:3000/api/historique/log', json = info,headers=headers) """
+    response = requests.post('http://172.16.199.85:3000/api/historique/log', json = info,headers=headers) """
 
     data = {}
     data['topic'] = topic
@@ -42,11 +42,11 @@ def on_message(client, userdata, message):
     data['heure'] = heure
     info = json.dumps(data)
 
-    response = requests.post('http://172.16.203.109:3000/api/historique/log', data = info,headers=headers)
+    response = requests.post('http://172.16.199.85:3000/api/historique/log', data = info,headers=headers)
     print (response)
     if topic == "demande/rfid":  
         codeRFID = json.loads(str(message.payload.decode("utf-8")))
-        response = requests.post('http://172.16.203.109:3000/api/rfid/authRFID', json = codeRFID,headers=headers)
+        response = requests.post('http://172.16.199.85:3000/api/rfid/authRFID', json = codeRFID,headers=headers)
         if(response.text != "-1"):
             client.publish("zigbee2mqtt/0x00124b0023428a8a/set","{\"state\": \"ON\"}")
             time.sleep(1)

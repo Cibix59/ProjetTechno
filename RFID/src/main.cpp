@@ -35,7 +35,7 @@ WiFiManager wm;
 WiFiClient wificlient;
 PubSubClient client(wificlient);
 
-char mqttServer[17] = "172.16.206.200";
+char mqttServer[17] = "172.16.226.101";
 int mqttPort = 1883;
 const char *mqttID = "ESP32ClientClement";
 int intervalle = 1000;

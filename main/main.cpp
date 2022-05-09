@@ -6,8 +6,8 @@
  * Cours Projets Technologiques (c)2022
  *
     @file     main.cpp
-    @author   Alain Dubé
-    @version  1.1 22/08/15
+    @author   Clément Bourdier
+    @version  1.2 08/05/22
     @description
       Démonstration comment utiliser le PORT SERIE pour accèder aux fonctionnalités
       de l'écran STONE en utilisant la classe SerialPort
@@ -26,11 +26,17 @@
     Historique des versions
         Version    Date       Auteur       Description
         1.1        22/08/15  Alain       Première version du logiciel
+        1.2        08/05/22  Clément     Rendu porjet technologique
 
     Fonctionnalités implantées
         Lecture des evénements envoyés par l'écran
         Envoyer une commande à l'écran
-          Optenir la version du Firmware de l'écran
+        Optenir la version du Firmware de l'écran
+    Fonctionnalités implantées (v1.2)
+        Utilisation de la classe Stone.cpp
+        Gestion de l'evenement switch sur l'ecran
+        Detection et lecture de fichiers XML
+        Chargement de plugins c++
 
  * */
 #include "panelAddon.hpp"
@@ -49,7 +55,6 @@
 
 #include "rapidxml.hpp"
 #include "rapidxml_utils.hpp"
-/* #include <experimental/filesystem> */
 #include <filesystem>
 #include <stdlib.h>
 
@@ -63,7 +68,7 @@ int NbrePlugIns = 0;
 int NbreAddon = 0;
 panelAddon *addon[1024];
 
-static Stone *stone; // todo
+static Stone *stone;
 
 std::string stoneVersion;
 std::string xmlVersion;
