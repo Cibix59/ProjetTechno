@@ -6,7 +6,7 @@
  * Cours Projets Technologiques (c)2022
  *
     @file     main.cpp
-    @author   Clément Bourdier
+    @author   Alain Dube 
     @version  1.2 08/05/22
     @description
       Démonstration comment utiliser le PORT SERIE pour accèder aux fonctionnalités
@@ -79,15 +79,6 @@ int positionPluginVoulu = -1;
 
 namespace fs = std::filesystem;
 
-// Structure local utilisés pour garder les informations lues de l'écran
-/* struct datasRead
-{
-  int id; // Si 0 alors il n'y a pas de données, <0 Numero commande non traitée, >1 Numero de la commande traité
-  char command[80];
-  char name[80];
-  int type;
-  char line[2048];
-}; */
 
 // Menu utilisé pour tester les fonctionalités implantées
 int selection = 0;
@@ -166,7 +157,6 @@ void fonctionLoop()
   {
 
     datasRead rd = stone->getValidsDatasIfExists();
-    /* std::cout << "GData : " << intToHexa(abs(rd.id)) << " " << rd.command << " " << rd.name << " " << rd.type << "\n"; */
     switch (rd.id)
     {
 
@@ -175,8 +165,6 @@ void fonctionLoop()
       std::cout << "GData : " << intToHexa(abs(rd.id)) << " " << rd.command << " " << rd.name << " " << rd.type << "\n";
       std::string stoneVersion = rd.name;
       std::cout << "Version : " << stoneVersion.c_str() << "\n";
-
-      // std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
       break;
     }
@@ -230,17 +218,11 @@ int main(int argc, char **argv)
 
   mySerial = new MySerial(serialPort);
   stone = new Stone(serialPort);
-  /* char ComPortName[] = {"/dev/ttyUSB0"}; */
+
   char ComPortName[] = {"/dev/"};
-  // int valRet = stone.init(ComPortName /* serialPort */, 115200);
-  // todo : en test
+  
 
-  /*   if (valRet == -1)
-    {
-      return (0);
-    } */
 
-  // return(0);
   // Lecture des configurations Xml du programme
   // Vide et initialise tous les éléments de l'écran
   rapidxml::file<> xmlFile("stone.xml");
@@ -312,7 +294,7 @@ int main(int argc, char **argv)
           addon[NbreAddon] = create_plugIns[NbrePlugIns]();
 
           vRet = addon[NbreAddon]->init(fileName, stone);
-          //todo : retirer ca, c'est pas tres beau
+          //si le retour est 42, c'est que c'est le plugin porte (logique à changer ici pour être vraiment enfichable)
           if(vRet == 42){
             positionPluginVoulu = NbreAddon;
           }
@@ -321,14 +303,6 @@ int main(int argc, char **argv)
             cerr << "Initialisation addon failed: " << vRet << '\n';
             continue;
           }
-          // test ici
-          std::cout << "\npendant init part -1" << std::endl;
-          // addon[NbreAddon]->startMqtt();
-          std::cout << "\npendant init part 0" << std::endl;
-          /*           addon[NbreAddon]->sendInfos("testtt");
-                    addon[NbreAddon]->stopMqtt();
-                    cout << "The test is ..... : " << std::to_string(addon[NbreAddon]->test()) << '\n'; */
-          /* cout << "The test is ..... : " << std::to_string(addon[NbreAddon]->test()) << '\n'; */
           NbreAddon++;
         }
       }
@@ -336,11 +310,6 @@ int main(int argc, char **argv)
       NbrePlugIns++;
     }
 
-
-
-  /*   std::cout << "\nLibrarie trouvee: " << std::to_string(plugIns[1]->test()) << std::endl; */
-
-  /*     setUpStonePanel(); */
 
   // Lancer un tread pour lire les données de la tablette Stone
   std::thread first(fonctionLoop);
@@ -350,7 +319,7 @@ int main(int argc, char **argv)
   // Détruire les addOns
   for (int i = 0; i < NbreAddon; i++)
   {
-    // todo terminer correctement tout les addons
+  
     addon[i]->stopMqtt();
     delete addon[i];
     std::cout << "\nAddOn détruit : " << i << std::endl;

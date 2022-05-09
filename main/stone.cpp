@@ -219,28 +219,3 @@ datasRead Stone::getValidsDatasIfExists()
 
   return (rd);
 };
-
-/*   if (selection == 6)
-  { // Demande set heure
-    char cmdFormat2[99];
-    strcpy(cmdFormat2, "ST<{\"cmd_code\":\"set_xy\",\"type\":\"label\",\"widget\":\"label1\",\"x\":150,\"y\":150}>ET");
-    std::cout << cmdFormat2 << "\n";
-    writeIt((char *)cmdFormat2);
-    menu();
-  } */
-
-/*     if (selection == 7)
-  { // Demande rotation
-    char cmdFormat2[99];
-    strcpy(cmdFormat2, "ST<{\"cmd_code\":\"set_rotation\",\"type\":\"image\",\"widget\":\"logocegep\",\"rotation\":90}>ET");
-    std::cout << cmdFormat2 << "\n";
-    writeIt((char *)cmdFormat2);
-
-    sleep(200);
-
-    strcpy(cmdFormat2, "ST<{\"cmd_code\":\"set_rotation\",\"type\":\"image\",\"widget\":\"logocegep\",\"rotation\":150}>ET");
-    std::cout << cmdFormat2 << "\n";
-    writeIt((char *)cmdFormat2);
-
-    menu();
-  } */

@@ -13,7 +13,7 @@ router.get('/:nom', getUnHistorique, (req, res) => {
 
 //Ajout d'un nouvel enregistrement
 router.post('/log', async (req, res) => {
-    console.log("crée un historique")
+
     unhistorique = new Historique({
         date: req.body.date,
         heure: req.body.heure,
@@ -23,7 +23,7 @@ router.post('/log', async (req, res) => {
     })
     try {
         const nouvelHistorique = await unhistorique.save()
-        console.log("pendant save historique")
+
         res.status(201).json(nouvelHistorique)
     }
     catch (err) {
@@ -33,7 +33,7 @@ router.post('/log', async (req, res) => {
 
 //Donne l'historique d'un peripherique
 async function getUnHistorique(req, res, next) {
-    console.log("get un historique")
+
     let lhistorique
     //donnees = '"peripherique.nom":"'+req.params.name+'"';
     try {

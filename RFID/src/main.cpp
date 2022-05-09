@@ -1,6 +1,25 @@
+/* Copyright (C) 2022 Clément Bourdier
+ * All rights reserved.
+ *
+ * Projet Domotique
+ * Ecole du Web
+ * Cours Projets Technologiques (c)2022
+ *
+    @file     main.cpp
+    @author   Clément Bourdier
+    @version  1.1 09/05/22
+    @description
+      Code pour ESP32 permettant l'utilisation d'un capteur rfid RC522
 
+    platform = ESP32
+    Langage : C++
 
-// source : http://les-electroniciens.com/videos/arduino-ep14-comment-utiliser-le-module-rfid-rc522
+    Fonctionnalités implantées
+        Lecture dune puce rfid
+        Configuration de l'esp par un site
+        Envois des informations à un broker mqtt
+
+ * */
 
 #include <Arduino.h>
 

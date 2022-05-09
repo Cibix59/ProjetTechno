@@ -1,3 +1,26 @@
+/* Copyright (C) 2022 Clément Bourdier
+ * All rights reserved.
+ *
+ * Projet Domotique
+ * Ecole du Web
+ * Cours Projets Technologiques (c)2022
+ *
+    @file     pluginPorte.cpp
+    @author   Clément Bourdier
+    @version  1.1 09/05/22
+    @description
+      Plugin destiné à être chargé dans main.cpp
+
+    platform = Raspberry Pi
+    OS = Linux
+    Langage : C++
+
+    Fonctionnalités implantées
+        communications avec le broker mqtt
+        chargement du xml
+        implementation de Stone
+
+ * */
 #include "panelAddon.hpp"
 #include <cmath>
 #include "stone.h"
