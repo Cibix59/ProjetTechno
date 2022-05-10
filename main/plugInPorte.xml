@@ -1,4 +1,6 @@
 <?xml version = "1.0" encoding = "utf-8" ?>
 <nom>"Plugin Porte"</nom>
-<broker>172.16.206.200:1883</broker>
-<description>"c'est un plugin de porte"</description>
+<ip>172.16.226.101</ip>
+<port>1883</port>
+<description>DescriptionPorte</description>
+<topic>zigbee2mqtt/0x00124b0023428a8a/set</topic>

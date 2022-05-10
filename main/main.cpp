@@ -6,8 +6,8 @@
  * Cours Projets Technologiques (c)2022
  *
     @file     main.cpp
-    @author   Alain Dubé
-    @version  1.1 22/08/15
+    @author   Alain Dube 
+    @version  1.2 08/05/22
     @description
       Démonstration comment utiliser le PORT SERIE pour accèder aux fonctionnalités
       de l'écran STONE en utilisant la classe SerialPort
@@ -26,11 +26,17 @@
     Historique des versions
         Version    Date       Auteur       Description
         1.1        22/08/15  Alain       Première version du logiciel
+        1.2        08/05/22  Clément     Rendu projet technologique
 
     Fonctionnalités implantées
         Lecture des evénements envoyés par l'écran
         Envoyer une commande à l'écran
-          Optenir la version du Firmware de l'écran
+        Optenir la version du Firmware de l'écran
+    Fonctionnalités implantées (v1.2)
+        Utilisation de la classe Stone.cpp
+        Gestion de l'evenement switch sur l'ecran
+        Detection et lecture de fichiers XML
+        Chargement de plugins c++
 
  * */
 #include "panelAddon.hpp"
@@ -40,6 +46,8 @@
 #include <string.h>
 #include <dlfcn.h> //Dynamic library
 
+#include <sstream>
+
 #include <thread> // std::thread
 #include <chrono> //Sleep
 
@@ -47,7 +55,6 @@
 
 #include "rapidxml.hpp"
 #include "rapidxml_utils.hpp"
-/* #include <experimental/filesystem> */
 #include <filesystem>
 #include <stdlib.h>
 
@@ -61,24 +68,17 @@ int NbrePlugIns = 0;
 int NbreAddon = 0;
 panelAddon *addon[1024];
 
-static Stone *stone; // todo
+static Stone *stone;
 
 std::string stoneVersion;
 std::string xmlVersion;
 std::string xmlTeam;
 std::string xmlThanks;
 
+int positionPluginVoulu = -1;
+
 namespace fs = std::filesystem;
 
-// Structure local utilisés pour garder les informations lues de l'écran
-struct datasRead
-{
-  int id; // Si 0 alors il n'y a pas de données, <0 Numero commande non traitée, >1 Numero de la commande traité
-  char command[80];
-  char name[80];
-  int type;
-  char line[2048];
-};
 
 // Menu utilisé pour tester les fonctionalités implantées
 int selection = 0;
@@ -149,159 +149,6 @@ std::string intToString(int value, std::string formatStr)
   return (buffer);
 };
 
-// Lire le contenu disponible sur le port série
-// Retourne les données dans la structure local datasRead
-// Si dataRead.id == 0 alors il n'y a pas de données lues sur le port
-// Exemple de données qui peuvent être lues sur le port:
-//   Basic format(Voir la documentation de l'écran pour plus de détails):
-//     Frame head  : ST<
-//     Command     : 0x1068 (exemple)
-//     Longeur     : 0x0004 (exemple)
-//     Data        : ctew   (exemple)
-//     Key Value   : 0x01   (exemple)
-//     Frame Tail  : >ET
-//     CRC         : AB 24  (exemple)
-datasRead getValidsDatasIfExists()
-{
-  int n, ii;
-  datasRead rd;
-
-  int commande, longeur;
-  char data[2048];
-  struct
-  {
-    union
-    { // Commande
-      unsigned short hexaShort;
-      struct
-      {
-        char c1;
-        char c2;
-      } c;
-    } shortDataCommand;
-    union
-    { // Longeur
-      unsigned short hexaShort;
-      struct
-      {
-        char c1;
-        char c2;
-      } c;
-    } shortDataLongeur;
-
-  } shortData;
-
-  // Initialisation
-  rd.id = 0; // 0 : Pas de données
-  rd.line[0] = 0x00;
-  rd.command[0] = 0x00;
-  rd.name[0] = 0x00;
-  rd.type = 0;
-
-  // Essai de trouver un S
-  n = mySerial->readIt((char *)data, 1);
-  while ((n == 1) && (data[0] != 'S'))
-  {
-    n = mySerial->readIt((char *)data, 1);
-  };
-  if (n <= 0)
-    return (rd);
-  // std::cout << "S FOUND\n";
-
-  // Essai de trouver un T
-  n = mySerial->readIt((char *)data, 1);
-  while ((n == 1) && (data[0] != 'T'))
-  {
-    n = mySerial->readIt((char *)data, 1);
-  };
-  if (n <= 0)
-    return (rd);
-  // std::cout << "T FOUND\n";
-
-  // Essai de trouver un <T>
-  n = mySerial->readIt((char *)data, 1);
-  while ((n == 1) && (data[0] != '<'))
-  {
-    n = mySerial->readIt((char *)data, 1);
-  };
-  if (n <= 0)
-    return (rd);
-  // std::cout << "< FOUND\n";
-
-  // Lecture de la commande et de la longeur de la donnee
-  n = mySerial->readIt(&shortData.shortDataCommand.c.c1, 4);
-
-  // Inverser certaines données
-  std::swap(shortData.shortDataCommand.c.c2, shortData.shortDataCommand.c.c1);
-  std::swap(shortData.shortDataLongeur.c.c2, shortData.shortDataLongeur.c.c1);
-
-  commande = shortData.shortDataCommand.hexaShort;
-  longeur = shortData.shortDataLongeur.hexaShort;
-
-  // Lecture Data
-  n = mySerial->readIt((char *)data, longeur);
-
-  switch (commande)
-  {
-
-  case 0x0002:
-  { // Version
-    int keyValue = (int)data[longeur - 1];
-    data[longeur - 1] = 0x00;
-
-    // Lire les données suivantes : TAIL (3 char ">ET") et CRC (Hexa16)
-    char TailDatas[5];
-    n = mySerial->readIt(TailDatas, 5);
-    // Check if TAIL (>ET) is OK
-    if ((n != 5) || (TailDatas[0] != '>') || (TailDatas[1] != 'E') || (TailDatas[2] != 'T'))
-      return (rd);
-    // Nous ne vérifions pas le CRC pour plus de rapidité mais ce serait mieux...
-    // Traitement du CRC
-    // int crc = TailDatas[4]; crc <<= 8; crc |= TailDatas[3];
-    // std::cout << "Crc: " << intToString(crc, "%4X") << "\n";
-
-    rd.id = commande;
-    strcpy(rd.command, "Version");
-    strcpy(rd.name, data);
-    rd.type = keyValue;
-
-    return (rd);
-    break;
-  };
-
-  default:
-  {
-
-    int keyValue = (int)data[longeur - 1];
-    data[longeur - 1] = 0x00;
-    // std::cout << "Key Value: " << keyValue << "\n";
-    // std::cout << "Data: " << data << "\n";
-
-    // Lire les données suivantes : TAIL (3 char ">ET") et CRC (Hexa16)
-    char TailDatas[5];
-    n = mySerial->readIt(TailDatas, 5);
-
-    // Check if TAIL (>ET) is OK
-    if ((n != 5) || (TailDatas[0] != '>') || (TailDatas[1] != 'E') || (TailDatas[2] != 'T'))
-      return (rd);
-    // Nous ne vérifions pas le CRC pour plus de rapidité mais ce serait mieux...
-    // Traitement du CRC
-    // int crc = TailDatas[4]; crc <<= 8; crc |= TailDatas[3];
-    // std::cout << "Crc: " << intToString(crc, "%4X") << "\n";
-
-    rd.id = -commande;
-    strcpy(rd.command, "???????");
-    strcpy(rd.name, data);
-    rd.type = keyValue;
-
-    return (rd);
-    break;
-  };
-  };
-
-  return (rd);
-};
-
 // Thread qui permet de LOOPER et lire le contenu du port serie
 // avec l'aide du la fonction getValidsDatasIfExists
 void fonctionLoop()
@@ -309,8 +156,7 @@ void fonctionLoop()
   while (true)
   {
 
-    datasRead rd = getValidsDatasIfExists();
-    // std::cout << "GData : " << intToHexa(abs(rd.id)) << " " << rd.command << " " << rd.name << " " << rd.type << "\n";
+    datasRead rd = stone->getValidsDatasIfExists();
     switch (rd.id)
     {
 
@@ -320,20 +166,28 @@ void fonctionLoop()
       std::string stoneVersion = rd.name;
       std::cout << "Version : " << stoneVersion.c_str() << "\n";
 
+      break;
+    }
+    case 4112:
+    {
+      std::cout << " ok";
+      // Bouton
+      std::cout << "GData : " << intToHexa(abs(rd.id)) << " " << rd.command << " " << rd.name << " " << rd.type << "\n";
+      std::string stoneVersion = rd.name;
+      if(rd.type == 0){
+        addon[positionPluginVoulu]->fermerPorte();
+      }else if (rd.type ==1)
+      {
+        addon[positionPluginVoulu]->ouvrirPorte();
+      }
+      
+      
+    //todo : declenche porte
+        //meilleur todo : avoir une liste vide d'event à surveiller, remplie par le plugin, associée à une methode du plugin à appeler -> creer un listener en gros
       // std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
       break;
     }
-      /*       case 0x1001:
-            { // Bouton
-              std::cout << "GData : " << intToHexa(abs(rd.id)) << " " << rd.command << " " << rd.name << " " << rd.type << "\n";
-              std::string stoneVersion = rd.name;
-              std::cout << " ok";
-
-              // std::this_thread::sleep_for(std::chrono::milliseconds(10));
-
-              break;
-            } */
     }
 
     if (rd.id < 0)
@@ -364,17 +218,11 @@ int main(int argc, char **argv)
 
   mySerial = new MySerial(serialPort);
   stone = new Stone(serialPort);
-  /* char ComPortName[] = {"/dev/ttyUSB0"}; */
+
   char ComPortName[] = {"/dev/"};
-  // int valRet = stone.init(ComPortName /* serialPort */, 115200);
-  // todo : en test
+  
 
-  /*   if (valRet == -1)
-    {
-      return (0);
-    } */
 
-  // return(0);
   // Lecture des configurations Xml du programme
   // Vide et initialise tous les éléments de l'écran
   rapidxml::file<> xmlFile("stone.xml");
@@ -444,18 +292,17 @@ int main(int argc, char **argv)
           cout << "File exist: " << fileName << "\n";
 
           addon[NbreAddon] = create_plugIns[NbrePlugIns]();
-          std::cout << "\npendant init part -1" << std::endl;
+
           vRet = addon[NbreAddon]->init(fileName, stone);
-          std::cout << "\npendant init part 0" << std::endl;
-          /* addon[NbreAddon]->test(); */
+          //si le retour est 42, c'est que c'est le plugin porte (logique à changer ici pour être vraiment enfichable)
+          if(vRet == 42){
+            positionPluginVoulu = NbreAddon;
+          }
           if (vRet < 0)
           {
             cerr << "Initialisation addon failed: " << vRet << '\n';
             continue;
           }
-          // test ici
-          /*  addon[NbreAddon]->test(); */
-          cout << "The test is ..... : " << std::to_string(addon[NbreAddon]->test()) << '\n';
           NbreAddon++;
         }
       }
@@ -463,18 +310,6 @@ int main(int argc, char **argv)
       NbrePlugIns++;
     }
 
-  std::cout << "\navant init" << std::endl;
-  // Parcourir les plugins et les initialiser
-  for (int i = 0; i < NbreAddon; i++)
-  {
-    /*     addon[i]->init(); */
-  }
-
-  std::cout << "\napres init" << std::endl;
-
-  /*   std::cout << "\nLibrarie trouvee: " << std::to_string(plugIns[1]->test()) << std::endl; */
-
-  /*     setUpStonePanel(); */
 
   // Lancer un tread pour lire les données de la tablette Stone
   std::thread first(fonctionLoop);
@@ -484,6 +319,8 @@ int main(int argc, char **argv)
   // Détruire les addOns
   for (int i = 0; i < NbreAddon; i++)
   {
+  
+    addon[i]->stopMqtt();
     delete addon[i];
     std::cout << "\nAddOn détruit : " << i << std::endl;
   }

@@ -10,6 +10,11 @@ const rfidSchema = new mongoose.Schema({
         type: Array,
         required: false
     }
+/*     ,
+    user: {
+        type: Array,
+        required: false
+    } */
 
 },{collection : "rfid"})
 
