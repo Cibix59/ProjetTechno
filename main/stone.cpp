@@ -1,3 +1,27 @@
+/* Copyright (C) 2022 Clément Bourdier
+ * All rights reserved.
+ *
+ * Projet Domotique
+ * Ecole du Web
+ * Cours Projets Technologiques (c)2022
+ *  
+    @file     stone.cpp
+    @author   Clément Bourdier
+    @version  1.1 09/05/22 
+    @description
+      Classe regroupant les methodes permetant de controler une tablette Stone branchée par USB à un Raspberry PI
+
+    platform = Raspberry Pi
+    OS = Linux
+    Langage : C++
+
+    Fonctionnalités implantées
+        redemarrage tablette
+        changement du texte sur l'ecran
+        ouvrir une fenetre
+        changer l'heure
+
+**/
 #include "stone.h"
 #include <sstream>
 

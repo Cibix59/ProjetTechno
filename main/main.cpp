@@ -26,7 +26,7 @@
     Historique des versions
         Version    Date       Auteur       Description
         1.1        22/08/15  Alain       Première version du logiciel
-        1.2        08/05/22  Clément     Rendu porjet technologique
+        1.2        08/05/22  Clément     Rendu projet technologique
 
     Fonctionnalités implantées
         Lecture des evénements envoyés par l'écran

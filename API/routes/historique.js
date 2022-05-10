@@ -38,15 +38,17 @@ async function getUnHistorique(req, res, next) {
     //donnees = '"peripherique.nom":"'+req.params.name+'"';
     try {
         lhistorique = await Historique.find({ "nomPeripherique": req.params.nom })
-        console.log("dedans 1")
+/*         if(req.params.nomPeripherique == "rfid"){
+            rfid = await Rfid.find({ "codeRFID": req.params.payload })
+        } */
         if (lhistorique == null) {
             return res.status(404).json({ message: "Impossible de trouver le peripherique" })
         }
     } catch (err) {
-        console.log("catch")
+
         return res.status(500).json({ message: err.message })
     }
-    console.log("fini 1")
+
     console.log(lhistorique)
     res.lhistorique = lhistorique
     next()
